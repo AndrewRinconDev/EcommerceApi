@@ -42,7 +42,7 @@ namespace EcommerceApi.Controllers
             try
             {
                 var favoriteProductFound = await _context.FavoriteProducts.Include(_ => _.product)
-                .FirstOrDefaultAsync(_ => _.id == id);
+                .FirstOrDefaultAsync(_ => _.id == id && _.isActive == true);
 
                 if (favoriteProductFound == null) return NotFound();
 
@@ -60,7 +60,7 @@ namespace EcommerceApi.Controllers
         public async Task<ActionResult<IEnumerable<FavoriteProduct>>> GetByCustomer(string customerId)
         {
             var favoriteProductFound = await _context.FavoriteProducts
-                .Where(_ => _.id == customerId).ToListAsync();
+                .Where(_ => _.id == customerId && _.isActive == true).ToListAsync();
 
             if (favoriteProductFound == null) return NotFound();
 
@@ -72,6 +72,8 @@ namespace EcommerceApi.Controllers
         public async Task<ActionResult<FavoriteProduct>> Post(FavoriteProduct favoriteProduct)
         {
             favoriteProduct.id = Guid.NewGuid().ToString();
+            favoriteProduct.isActive = true;
+
             _context.Add(favoriteProduct);
             await _context.SaveChangesAsync();
 
@@ -97,7 +99,7 @@ namespace EcommerceApi.Controllers
                 return BadRequest();
             }
 
-            return NoContent();
+            return Ok(favoriteProduct);
         }
 
         // DELETE api/<FavoriteProducts>/5

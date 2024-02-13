@@ -105,41 +105,34 @@ namespace EcommerceApi.Controllers
         {
             if (id != customerDto.id) return BadRequest();
 
-            var userIdExist = _context.Customers.Any(_ => _.id != id && _.userId == customerDto.userId);
-            if (userIdExist) return BadRequest("User already exists");
+            if (UserExists(id, customerDto.userId)) return BadRequest("User already is a customer");
 
             var customer = _mapper.Map<Customer>(customerDto);
 
             return await Update(customer);
         }
 
+        // PUT api/<CustomersController>/Reactive/5
+        [HttpPut("Reactive/{id}")]
+        public async Task<ActionResult<Customer>> Reactive(string id, Customer customer)
+        {
+            if (UserExists(id, customer.userId)) return BadRequest("User already is a customer");
+
+            return await UpdateCustomerActive(customer, true);
+        }
+
         // DELETE api/<CustomersController>/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Customer>> Delete(string id)
         {
-            var customer = await _context.Customers.Include(_ => _.addresses)
+            var customer = await _context.Customers
+                .Include(_ => _.addresses)
+                .Include(_ => _.favoriteProducts)
                 .FirstOrDefaultAsync(_ => _.id == id);
 
             if (customer == null) return NotFound();
 
-            customer.addresses.ToList().ForEach(_ => _.isActive = false);
-            customer.isActive = false;
-
-            return await Update(customer);
-        }
-
-        private bool CustomerExists(string? id)
-        {
-            if (id == null) return false;
-
-            return _context.Customers.Any(e => e.id == id);
-        }
-        
-        private bool CustomerUserExists(string? userId)
-        {
-            if (userId == null) return false;
-
-            return _context.Customers.Any(_ => _.userId == userId && _.isActive);
+            return await UpdateCustomerActive(customer, false);
         }
 
         private async Task<ActionResult<Customer>> Update(Customer customer)
@@ -158,6 +151,38 @@ namespace EcommerceApi.Controllers
             }
 
             return Ok(customer);
+        }
+
+        public async Task<ActionResult<Customer>> UpdateCustomerActive(Customer customer, bool isActive = false)
+        {
+            customer.addresses.ToList().ForEach(_ => _.isActive = isActive);
+            customer.favoriteProducts.ToList().ForEach(_ => _.isActive = isActive);
+            customer.isActive = isActive;
+
+            // TODO - Order delete
+
+            return await Update(customer);
+        }
+
+        private bool CustomerExists(string? id)
+        {
+            if (id == null) return false;
+
+            return _context.Customers.Any(e => e.id == id);
+        }
+
+        private bool CustomerUserExists(string? userId)
+        {
+            if (userId == null) return false;
+
+            return _context.Customers.Any(_ => _.userId == userId && _.isActive);
+        }
+
+        private bool UserExists(string? id, string? userId)
+        {
+            if (userId == null || id == null) return false;
+
+            return _context.Customers.Any(_ => _.id != id && _.userId == userId);
         }
     }
 }

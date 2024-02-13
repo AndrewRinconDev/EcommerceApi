@@ -17,12 +17,14 @@ namespace EcommerceApi.Controllers
     {
         private readonly EcommerceDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
         private CryptographyHelper cryptographyHelper;
 
         public UsersController(EcommerceDbContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
+            _configuration = configuration;
             cryptographyHelper = new CryptographyHelper(configuration);
         }
 
@@ -93,23 +95,23 @@ namespace EcommerceApi.Controllers
 
             return await Update(user);
         }
+        // PUT api/<UsersController>/Reactive/5
+        [HttpPut("Reactive/{id}")]
+        public async Task<ActionResult<User>> Reactive(string id, User user)
+        {
+            if (id != user.id) return BadRequest();
+
+            return await UpdateUserActive(user, true);
+        }
 
         // DELETE api/<UsersController>/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> Delete(string id)
         {
-            var user = _context.Users.Find(id);
+            var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
 
-            user.isActive = false;
-            var userCustomer = await _context.Customers.FirstOrDefaultAsync(_ => _.userId == id);
-            if (userCustomer != null)
-            {
-                userCustomer.isActive = false;
-                _context.Update(userCustomer);
-            }
-
-            return await Update(user);
+            return await UpdateUserActive(user, false);
         }
 
         private bool UserExists(string? id)
@@ -135,6 +137,23 @@ namespace EcommerceApi.Controllers
             }
 
             return Ok(user);
+        }
+
+        private async Task<ActionResult<User>> UpdateUserActive(User user, bool isActive = false)
+        {
+            user.isActive = isActive;
+            var userCustomer = await _context.Customers
+                .Include(_ => _.addresses)
+                .Include(_ => _.favoriteProducts)
+                .FirstOrDefaultAsync(_ => _.userId == user.id);
+
+            if (userCustomer != null)
+            {
+                CustomersController customersController = new CustomersController(_context, _mapper, _configuration);
+                await customersController.UpdateCustomerActive(userCustomer, isActive);
+            }
+
+            return await Update(user);
         }
     }
 }

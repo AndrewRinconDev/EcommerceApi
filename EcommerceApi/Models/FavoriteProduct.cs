@@ -6,6 +6,7 @@ namespace EcommerceApi.Models
     {
         public string? id { get; set; }
         public string customerId { get; set; }
+        public bool? isActive { get; set; }
         public string productId { get; set; }
         [JsonIgnore]
         public virtual Product? product { get; set; }

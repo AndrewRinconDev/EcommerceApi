@@ -14,5 +14,7 @@ namespace EcommerceApi.Models
         public virtual User user { get; set; }
         [JsonIgnore]
         public virtual ICollection<Address> addresses { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<FavoriteProduct> favoriteProducts { get; set; }
     }
 }

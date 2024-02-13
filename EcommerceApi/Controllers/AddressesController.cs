@@ -107,7 +107,7 @@ namespace EcommerceApi.Controllers
                 return BadRequest();
             }
 
-            return NoContent();
+            return Ok(address);
         }
 
         private bool AddressExists(string id)
