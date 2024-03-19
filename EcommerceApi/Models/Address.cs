@@ -1,16 +1,20 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace EcommerceApi.Models
 {
     public class Address
     {
-        public string? id { get; set; }
+        public Guid? id { get; set; }
+        [MaxLength(100)]
         public string address { get; set; }
+        [MaxLength(50)]
         public string city { get; set; }
+        [MaxLength(50)]
         public string state { get; set; }
         public int zipCode { get; set; }
         public bool? isActive { get; set; }
-        public string customerId { get; set; }
+        public Guid customerId { get; set; }
         [JsonIgnore]
         public virtual Customer? customer { get; set; }
     }

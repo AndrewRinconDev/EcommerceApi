@@ -1,16 +1,21 @@
-﻿namespace EcommerceApi.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
+namespace EcommerceApi.Models
 {
     public class Product
     {
-        public string? id { get; set; }
+        public Guid? id { get; set; }
+        [MaxLength(50)]
         public string name { get; set; }
+        [MaxLength(300)]
         public string? description { get; set; }
         public string imageUrl { get; set; }
         public double price { get; set; }
         public int stock { get; set; }
-        public string categoryId { get; set; }
+        public Guid categoryId { get; set; }
         public bool isActive { get; set; }
-        public virtual Category category { get; set; }
-        public virtual ICollection<OrderProduct> orderProducts { get; set; }
+        [JsonIgnore]
+        public virtual Category? category { get; set; }
     }
 }

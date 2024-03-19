@@ -42,7 +42,7 @@ namespace EcommerceApi.Controllers
             try
             {
                 var favoriteProductFound = await _context.FavoriteProducts.Include(_ => _.product)
-                .FirstOrDefaultAsync(_ => _.id == id && _.isActive == true);
+                .FirstOrDefaultAsync(_ => _.id == new Guid(id) && _.isActive == true);
 
                 if (favoriteProductFound == null) return NotFound();
 
@@ -60,7 +60,7 @@ namespace EcommerceApi.Controllers
         public async Task<ActionResult<IEnumerable<FavoriteProduct>>> GetByCustomer(string customerId)
         {
             var favoriteProductFound = await _context.FavoriteProducts
-                .Where(_ => _.id == customerId && _.isActive == true).ToListAsync();
+                .Where(_ => _.id == new Guid(customerId) && _.isActive == true).ToListAsync();
 
             if (favoriteProductFound == null) return NotFound();
 
@@ -71,7 +71,7 @@ namespace EcommerceApi.Controllers
         [HttpPost]
         public async Task<ActionResult<FavoriteProduct>> Post(FavoriteProduct favoriteProduct)
         {
-            favoriteProduct.id = Guid.NewGuid().ToString();
+            favoriteProduct.id = Guid.NewGuid();
             favoriteProduct.isActive = true;
 
             _context.Add(favoriteProduct);
@@ -84,7 +84,7 @@ namespace EcommerceApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<FavoriteProduct>> Put(string id, FavoriteProduct favoriteProduct)
         {
-            if (id != favoriteProduct.id) return BadRequest();
+            if (new Guid(id) != favoriteProduct.id) return BadRequest();
 
             try
             {
@@ -93,7 +93,7 @@ namespace EcommerceApi.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                if (!FavoriteProductExists(id)) return NotFound();
+                if (!FavoriteProductExists(new Guid(id))) return NotFound();
 
                 Console.Error.WriteLine(e);
                 return BadRequest();
@@ -115,7 +115,7 @@ namespace EcommerceApi.Controllers
             return Ok(true);
         }
 
-        private bool FavoriteProductExists(string id)
+        private bool FavoriteProductExists(Guid? id)
         {
             return _context.FavoriteProducts.Any(e => e.id == id);
         }

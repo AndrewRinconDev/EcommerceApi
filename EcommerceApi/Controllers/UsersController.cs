@@ -5,6 +5,7 @@ using EcommerceApi.Helpers;
 using EcommerceApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -50,7 +51,7 @@ namespace EcommerceApi.Controllers
             try
             {
                 var userFound = await _context.Users.Include(_ => _.role)
-                .FirstOrDefaultAsync(u => u.id == id);
+                .FirstOrDefaultAsync(u => u.id == new Guid(id));
 
                 if (userFound == null) return NotFound();
 
@@ -68,7 +69,7 @@ namespace EcommerceApi.Controllers
         public async Task<ActionResult<User>> Post(UserDto userDto)
         {
             var user = _mapper.Map<User>(userDto);
-            user.id = Guid.NewGuid().ToString();
+            user.id = Guid.NewGuid();
             user.password = cryptographyHelper.Encrypt(user.password);
             user.isActive = true;
 
@@ -83,9 +84,9 @@ namespace EcommerceApi.Controllers
         public async Task<ActionResult<User>> Put(string id, UserDto userDto)
         {
             var user = _mapper.Map<User>(userDto);
-            if (id != user.id) return BadRequest();
+            if (new Guid(id) != user.id) return BadRequest();
 
-            var oldUser = _context.Users.FirstOrDefault(u => u.id == id);
+            var oldUser = _context.Users.FirstOrDefault(u => u.id == new Guid(id));
             if (oldUser == null) return NotFound();
 
             if (user.password != oldUser.password)
@@ -99,7 +100,7 @@ namespace EcommerceApi.Controllers
         [HttpPut("Reactive/{id}")]
         public async Task<ActionResult<User>> Reactive(string id, User user)
         {
-            if (id != user.id) return BadRequest();
+            if (new Guid(id) != user.id) return BadRequest();
 
             return await UpdateUserActive(user, true);
         }
@@ -114,7 +115,7 @@ namespace EcommerceApi.Controllers
             return await UpdateUserActive(user, false);
         }
 
-        private bool UserExists(string? id)
+        private bool UserExists(Guid? id)
         {
             if(id == null) return false;
 
@@ -149,8 +150,8 @@ namespace EcommerceApi.Controllers
 
             if (userCustomer != null)
             {
-                CustomersController customersController = new CustomersController(_context, _mapper, _configuration);
-                await customersController.UpdateCustomerActive(userCustomer, isActive);
+                //CustomersController customersController = new CustomersController(_context, _mapper, _configuration);
+                //await customersController.UpdateCustomerActive(userCustomer, isActive);
             }
 
             return await Update(user);

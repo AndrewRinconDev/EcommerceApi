@@ -15,5 +15,9 @@ namespace EcommerceApi.Context
         public DbSet<FavoriteProduct> FavoriteProducts { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<OrderState> OrderStates { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderRecord> OrderRecords { get; set; }
+        public DbSet<OrderProduct> OrderProducts { get; set; }
     }
 }

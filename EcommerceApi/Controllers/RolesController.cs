@@ -41,7 +41,7 @@ namespace EcommerceApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Role>> Post(Role role)
         {
-            role.id = Guid.NewGuid().ToString();
+            role.id = Guid.NewGuid();
             _context.Roles.Add(role);
             await _context.SaveChangesAsync();
 
@@ -52,7 +52,7 @@ namespace EcommerceApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<Role>> Put(string id, Role role)
         {
-            if (id != role.id) return BadRequest();
+            if (new Guid(id) != role.id) return BadRequest();
 
             try
             {
@@ -61,7 +61,7 @@ namespace EcommerceApi.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                if (!RoleExists(id)) return NotFound();
+                if (!RoleExists(new Guid(id))) return NotFound();
 
                 Console.Error.WriteLine(e);
                 return BadRequest();
@@ -82,7 +82,7 @@ namespace EcommerceApi.Controllers
             return Ok(true);
         }
 
-        private bool RoleExists(string id)
+        private bool RoleExists(Guid? id)
         {
             return _context.Roles.Any(e => e.id == id);
         }

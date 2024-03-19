@@ -40,7 +40,7 @@ namespace EcommerceApi.Controllers
         public async Task<ActionResult<Address>> Get(string id)
         {
             var addressFound = await _context.Addresses
-                .FirstOrDefaultAsync(_ => _.id == id && _.isActive == true);
+                .FirstOrDefaultAsync(_ => _.id == new Guid(id) && _.isActive == true);
 
             if (addressFound == null) return NotFound();
 
@@ -52,7 +52,7 @@ namespace EcommerceApi.Controllers
         public async Task<ActionResult<IEnumerable<Address>>> GetByCustomer(string customerId)
         {
             var addressesFound = await _context.Addresses
-                .Where(_ => _.customerId == customerId && _.isActive == true).ToListAsync();
+                .Where(_ => _.customerId == new Guid(customerId) && _.isActive == true).ToListAsync();
 
             if (addressesFound == null) return NotFound();
 
@@ -63,7 +63,7 @@ namespace EcommerceApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Address>> Post(Address address)
         {
-            address.id = Guid.NewGuid().ToString();
+            address.id = Guid.NewGuid();
             address.isActive = true;
 
             _context.Add(address);
@@ -76,7 +76,7 @@ namespace EcommerceApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<Address>> Put(string id, Address address)
         {
-            if (id != address.id) return BadRequest();
+            if (new Guid(id) != address.id) return BadRequest();
 
             return await Update(address);
         }
@@ -110,7 +110,7 @@ namespace EcommerceApi.Controllers
             return Ok(address);
         }
 
-        private bool AddressExists(string id)
+        private bool AddressExists(Guid? id)
         {
             return _context.Addresses.Any(e => e.id == id);
         }

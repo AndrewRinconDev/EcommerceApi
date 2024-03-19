@@ -40,7 +40,7 @@ namespace EcommerceApi.Controllers
         public async Task<ActionResult<IEnumerable<Category>>> Get(string id)
         {
             var categoryFound = await _context.Categories.Include(_ => _.subcategories)
-                .FirstOrDefaultAsync(_ => _.id == id && _.isActive == true);
+                .FirstOrDefaultAsync(_ => _.id == new Guid(id) && _.isActive == true);
 
             if (categoryFound == null) return NotFound();
 
@@ -79,7 +79,7 @@ namespace EcommerceApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Category>> Post(Category category)
         {
-            category.id = Guid.NewGuid().ToString();
+            category.id = Guid.NewGuid();
             category.isActive = true;
 
             _context.Categories.Add(category);
@@ -92,7 +92,7 @@ namespace EcommerceApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<Category>> Put(string id, Category category)
         {
-            if (id != category.id) return BadRequest();
+            if (new Guid(id) != category.id) return BadRequest();
 
             return await Update(category);
         }
@@ -101,8 +101,9 @@ namespace EcommerceApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Category>> Delete(string id)
         {
-            var category = await _context.Categories.Include(_ => _.subcategories)
-                .FirstOrDefaultAsync(_ => _.id == id && _.isActive == true);
+            var category = await _context.Categories
+                .Include(_ => _.subcategories)
+                .FirstOrDefaultAsync(_ => _.id == new Guid(id) && _.isActive == true);
 
             if (category == null) return NotFound();
 
@@ -111,7 +112,7 @@ namespace EcommerceApi.Controllers
 
             return await Update(category);
         }
-        private bool CategoryExists(string id)
+        private bool CategoryExists(Guid? id)
         {
             return _context.Categories.Any(e => e.id == id);
         }
@@ -134,7 +135,7 @@ namespace EcommerceApi.Controllers
             return Ok(category);
         }
 
-        private async Task<ICollection<Category>> GetSubcategories(string parentId, bool inisActive = false)
+        private async Task<ICollection<Category>> GetSubcategories(Guid? parentId, bool inisActive = false)
         {
             var subcategories = await _context.Categories
                    .Include(_ => _.subcategories)
