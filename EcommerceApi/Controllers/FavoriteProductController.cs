@@ -1,9 +1,7 @@
 ﻿using EcommerceApi.Context;
-using EcommerceApi.Dto;
 using EcommerceApi.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

@@ -1,5 +1,4 @@
-﻿using EcommerceApi.Dto;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
 namespace EcommerceApi.Models.Database
