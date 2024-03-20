@@ -1,5 +1,5 @@
 ﻿using EcommerceApi.Context;
-using EcommerceApi.Models;
+using EcommerceApi.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -11,11 +11,11 @@ namespace EcommerceApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesController : ControllerBase
+    public class CategoryController : ControllerBase
     {
         private readonly EcommerceDbContext _context;
 
-        public CategoriesController(EcommerceDbContext context)
+        public CategoryController(EcommerceDbContext context)
         {
             _context = context;
         }

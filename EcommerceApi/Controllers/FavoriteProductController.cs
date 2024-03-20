@@ -1,6 +1,6 @@
 ﻿using EcommerceApi.Context;
 using EcommerceApi.Dto;
-using EcommerceApi.Models;
+using EcommerceApi.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -11,11 +11,11 @@ namespace EcommerceApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FavoriteProductsController : ControllerBase
+    public class FavoriteProductController : ControllerBase
     {
         private readonly EcommerceDbContext _context;
 
-        public FavoriteProductsController(EcommerceDbContext context)
+        public FavoriteProductController(EcommerceDbContext context)
         {
             _context = context;
         }

@@ -1,4 +1,4 @@
-﻿namespace EcommerceApi.Dto
+﻿namespace EcommerceApi.Models.Dto
 {
     public class UserDto
     {

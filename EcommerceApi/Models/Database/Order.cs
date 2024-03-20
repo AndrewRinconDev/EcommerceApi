@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace EcommerceApi.Models
+namespace EcommerceApi.Models.Database
 {
     public class Order
     {

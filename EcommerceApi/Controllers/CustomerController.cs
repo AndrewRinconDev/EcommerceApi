@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using EcommerceApi.Context;
-using EcommerceApi.Dto;
 using EcommerceApi.Helpers;
-using EcommerceApi.Models;
+using EcommerceApi.Models.Database;
+using EcommerceApi.Models.Dto;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,13 +14,13 @@ namespace EcommerceApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomersController : ControllerBase
+    public class CustomerController : ControllerBase
     {
         private readonly EcommerceDbContext _context;
         private CryptographyHelper cryptographyHelper;
         private readonly IMapper _mapper;
 
-        public CustomersController(EcommerceDbContext context, IMapper mapper, IConfiguration configuration)
+        public CustomerController(EcommerceDbContext context, IMapper mapper, IConfiguration configuration)
         {
             _mapper = mapper;
             _context = context;

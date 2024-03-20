@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using static System.Net.Mime.MediaTypeNames;
-using EcommerceApi.Models;
+using EcommerceApi.Models.Utils;
 
 namespace EcommerceApi.Helpers
 {

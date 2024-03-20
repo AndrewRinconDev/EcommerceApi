@@ -1,8 +1,8 @@
 ﻿using EcommerceApi.Context;
-using EcommerceApi.Models;
+using EcommerceApi.Models.Database;
+using EcommerceApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.Loader;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -10,23 +10,24 @@ namespace EcommerceApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AddressesController : ControllerBase
+    public class AddressController : ControllerBase
     {
         private readonly EcommerceDbContext _context;
+        private readonly AddressService _addressService;
 
-        public AddressesController(EcommerceDbContext context)
+        public AddressController(EcommerceDbContext context, AddressService addressService)
         {
             _context = context;
+            _addressService = addressService;
         }
 
         // GET: api/<AddressesController>
         [HttpGet]
-        public ActionResult<IEnumerable<Address>> Get()
+        public async Task<ActionResult<IEnumerable<Address>>> Get()
         {
             try
             {
-
-                return Ok(_context.Addresses.Where(_ => _.isActive == true).ToList());
+                return Ok(await _addressService.GetActiveAddresses());
             }
             catch (Exception e)
             {
@@ -39,8 +40,7 @@ namespace EcommerceApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Address>> Get(string id)
         {
-            var addressFound = await _context.Addresses
-                .FirstOrDefaultAsync(_ => _.id == new Guid(id) && _.isActive == true);
+            var addressFound = await _addressService.GetActiveAddressById(new Guid(id));
 
             if (addressFound == null) return NotFound();
 
@@ -51,8 +51,7 @@ namespace EcommerceApi.Controllers
         [HttpGet("Customer/{customerId}")]
         public async Task<ActionResult<IEnumerable<Address>>> GetByCustomer(string customerId)
         {
-            var addressesFound = await _context.Addresses
-                .Where(_ => _.customerId == new Guid(customerId) && _.isActive == true).ToListAsync();
+            var addressesFound = await _addressService.GetActiveAddressByCustomerId(new Guid(customerId));
 
             if (addressesFound == null) return NotFound();
 
@@ -63,56 +62,50 @@ namespace EcommerceApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Address>> Post(Address address)
         {
-            address.id = Guid.NewGuid();
-            address.isActive = true;
-
-            _context.Add(address);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("Get", new { id = address.id }, address);
+            try
+            {
+                return Ok(await _addressService.SaveAddress(address));
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                return BadRequest();
+            }
         }
 
         // PUT api/<AddressesController>/5
         [HttpPut("{id}")]
         public async Task<ActionResult<Address>> Put(string id, Address address)
         {
-            if (new Guid(id) != address.id) return BadRequest();
+            try
+            {
+                if (new Guid(id) != address.id) return BadRequest();
 
-            return await Update(address);
+                return Ok(await _addressService.UpdateAddress(address));
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                return BadRequest();
+            }
         }
 
         // DELETE api/<AddressesController>/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Address>> Delete(string id)
         {
-            var address = await _context.Addresses.FindAsync(id);
-            if (address == null) return NotFound();
-
-            address.isActive = false;
-            return await Update(address);
-        }
-
-        private async Task<ActionResult<Address>> Update(Address address)
-        {
             try
             {
-                _context.Update(address);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                if (!AddressExists(address.id)) return NotFound();
+                var address = await _addressService.DeleteAddress(new Guid(id));
+                if (address == null) return NotFound();
 
+                return Ok(address);
+            }
+            catch (Exception e)
+            {
                 Console.Error.WriteLine(e);
                 return BadRequest();
             }
-
-            return Ok(address);
-        }
-
-        private bool AddressExists(Guid? id)
-        {
-            return _context.Addresses.Any(e => e.id == id);
         }
     }
 }

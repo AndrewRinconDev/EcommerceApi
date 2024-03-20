@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
-namespace EcommerceApi.Models
+namespace EcommerceApi.Models.Database
 {
     public class Customer
     {

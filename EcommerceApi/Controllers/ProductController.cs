@@ -1,5 +1,5 @@
 using EcommerceApi.Context;
-using EcommerceApi.Models;
+using EcommerceApi.Models.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,11 +7,11 @@ namespace EcommerceApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class ProductController : ControllerBase
     {
         private readonly EcommerceDbContext _context;
 
-        public ProductsController(EcommerceDbContext context)
+        public ProductController(EcommerceDbContext context)
         {
             _context = context;
         }
