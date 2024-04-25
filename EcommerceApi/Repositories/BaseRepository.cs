@@ -1,14 +1,13 @@
-﻿using EcommerceApi.Models.Database;
-using EcommerceApi.Repositories.Contracts;
+﻿using EcommerceApi.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceApi.Repositories
 {
-    public class BaseEntityFrameworkRepository<T> : IBaseEntityFrameworkRepository<T> where T : class
+    public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
         protected readonly DbContext _context;
 
-        public BaseEntityFrameworkRepository(DbContext context)
+        public BaseRepository(DbContext context)
         {
             _context = context;
         }

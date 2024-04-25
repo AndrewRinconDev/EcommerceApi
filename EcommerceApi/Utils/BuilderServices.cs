@@ -33,8 +33,8 @@ namespace EcommerceApi.Utils
 
         private static void AddEntityFrameworkRepositories(IServiceCollection services)
         {
-            services.AddScoped(typeof(IBaseEntityFrameworkRepository<>), typeof(BaseEntityFrameworkRepository<>));
-            services.AddScoped<IBaseEntityFrameworkRepository<Address>, AddressRepository>();
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<IBaseRepository<Address>, AddressRepository>();
         }
 
         private static void AddServices(IServiceCollection services)

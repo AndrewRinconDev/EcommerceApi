@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceApi.Repositories
 {
-    public class AddressRepository : BaseEntityFrameworkRepository<Address>, IAddressRepository
+    public class AddressRepository : BaseRepository<Address>, IAddressRepository
     {
         public AddressRepository(EcommerceDbContext context) : base(context) { }
 

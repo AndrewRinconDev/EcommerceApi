@@ -11,5 +11,8 @@
         public Task<T> Save(T entity);
 
         public Task<T> Update(T entity);
+
+        public void DetachAllEntities();
     }
+
 }

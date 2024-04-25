@@ -6,9 +6,9 @@ namespace EcommerceApi.Services
 {
     public class BaseService<T> : IBaseService<T> where T : BDEntity
     {
-        protected readonly IBaseEntityFrameworkRepository<T> _repository;
+        protected readonly IBaseRepository<T> _repository;
 
-        public BaseService(IBaseEntityFrameworkRepository<T> repository)
+        public BaseService(IBaseRepository<T> repository)
         {
             _repository = repository;
         }
