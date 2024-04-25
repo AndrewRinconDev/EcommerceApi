@@ -1,8 +1,6 @@
-﻿using EcommerceApi.Context;
-using EcommerceApi.Models.Database;
-using EcommerceApi.Services;
+﻿using EcommerceApi.Models.Database;
+using EcommerceApi.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,12 +10,10 @@ namespace EcommerceApi.Controllers
     [ApiController]
     public class AddressController : ControllerBase
     {
-        private readonly EcommerceDbContext _context;
-        private readonly AddressService _addressService;
+        private readonly IAddressService _addressService;
 
-        public AddressController(EcommerceDbContext context, AddressService addressService)
+        public AddressController(IAddressService addressService)
         {
-            _context = context;
             _addressService = addressService;
         }
 

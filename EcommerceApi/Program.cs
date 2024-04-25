@@ -1,25 +1,9 @@
-using AutoMapper;
-using EcommerceApi.Context;
-using Microsoft.EntityFrameworkCore;
+using EcommerceApi.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddControllers().AddNewtonsoftJson(options =>
-{
-    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-});
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<EcommerceDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-}); 
+BuilderServices.AddInitialConfig(builder);
 
 var app = builder.Build();
 
