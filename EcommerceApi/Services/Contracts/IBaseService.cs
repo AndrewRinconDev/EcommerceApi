@@ -13,5 +13,7 @@
         public Task<T> Update(T entity);
 
         public void DetachEntities();
+
+        public Task<bool> Exist(Guid id);
     }
 }

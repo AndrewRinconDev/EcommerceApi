@@ -17,7 +17,7 @@ namespace EcommerceApi.Controllers
             _addressService = addressService;
         }
 
-        // GET: api/<AddressesController>
+        // GET: api/<AddressController>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Address>>> Get()
         {
@@ -32,7 +32,7 @@ namespace EcommerceApi.Controllers
             }
         }
 
-        // GET api/<AddressesController>/5
+        // GET api/<AddressController>/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Address>> Get(string id)
         {
@@ -43,7 +43,7 @@ namespace EcommerceApi.Controllers
             return Ok(addressFound);
         }
 
-        // GET api/<AddressesController>/customer/5
+        // GET api/<AddressController>/customer/5
         [HttpGet("Customer/{customerId}")]
         public async Task<ActionResult<IEnumerable<Address>>> GetByCustomer(string customerId)
         {
@@ -54,7 +54,7 @@ namespace EcommerceApi.Controllers
             return Ok(addressesFound);
         }
 
-        // POST api/<AddressesController>
+        // POST api/<AddressController>
         [HttpPost]
         public async Task<ActionResult<Address>> Post(Address address)
         {
@@ -69,7 +69,7 @@ namespace EcommerceApi.Controllers
             }
         }
 
-        // PUT api/<AddressesController>/5
+        // PUT api/<AddressController>/5
         [HttpPut("{id}")]
         public async Task<ActionResult<Address>> Put(string id, Address address)
         {
@@ -77,16 +77,18 @@ namespace EcommerceApi.Controllers
             {
                 if (new Guid(id) != address.id) return BadRequest();
 
-                return Ok(await _addressService.UpdateAddress(address));
+                return Ok(await _addressService.Update(address));
             }
             catch (Exception e)
             {
+                if (!await _addressService.Exist(address.id)) return NotFound();
+
                 Console.Error.WriteLine(e);
                 return BadRequest();
             }
         }
 
-        // DELETE api/<AddressesController>/5
+        // DELETE api/<AddressController>/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Address>> Delete(string id)
         {

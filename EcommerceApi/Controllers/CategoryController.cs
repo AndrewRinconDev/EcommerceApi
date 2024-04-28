@@ -1,9 +1,6 @@
-﻿using EcommerceApi.Context;
-using EcommerceApi.Models.Database;
+﻿using EcommerceApi.Models.Database;
+using EcommerceApi.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,20 +10,20 @@ namespace EcommerceApi.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly EcommerceDbContext _context;
+        private readonly ICategoryService _categoryService;
 
-        public CategoryController(EcommerceDbContext context)
+        public CategoryController(ICategoryService categoryService)
         {
-            _context = context;
+            _categoryService = categoryService;
         }
 
-        // GET: api/<CategoriesController>
+        // GET: api/<CategoryController>
         [HttpGet]
-        public ActionResult<IEnumerable<Category>> Get()
+        public async Task<ActionResult<IEnumerable<Category>>> Get()
         {
             try
             {
-               return Ok(_context.Categories.Where(_ => _.isActive == true).ToList());
+               return Ok(await _categoryService.GetActiveCategories());
             }
             catch (Exception e)
             {
@@ -35,35 +32,39 @@ namespace EcommerceApi.Controllers
             }
         }
 
-        // GET api/<CategoriesController>/5
+        // GET: api/<CategoryController>/All
+        [HttpGet("All")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetAll()
+        {
+            try
+            {
+               return Ok(await _categoryService.GetAll());
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                return NotFound();
+            }
+        }
+
+        // GET api/<CategoryController>/5
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<Category>>> Get(string id)
         {
-            var categoryFound = await _context.Categories.Include(_ => _.subcategories)
-                .FirstOrDefaultAsync(_ => _.id == new Guid(id) && _.isActive == true);
+            var categoryFound = await _categoryService.GetActiveCategoryById(new Guid(id));
 
             if (categoryFound == null) return NotFound();
 
             return Ok(categoryFound);
         }
-
-        // GET: api/<CategoriesController>/Subcategories
-        [HttpGet("Subcategories")]
-        public async Task<ActionResult<IEnumerable<Category>>> GetSubcategories()
+        
+        // GET: api/<CategoryController>/Subcategories
+        [HttpGet("GetSubcategoriesByParent/{parentId}")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetSubcategoriesByParent(string parentId)
         {
             try
             {
-                var categories = await _context.Categories
-                    .Include(_ => _.subcategories)
-                    .Where(_ => _.parentId == null && _.isActive == true)
-                    .ToListAsync();
-
-                if (categories == null) return NotFound();
-
-                foreach (Category category in categories)
-                {
-                    category.subcategories = await GetSubcategories(category.id);
-                }
+                var categories = await _categoryService.GetSubcategoriesByParent(new Guid(parentId));
 
                 return Ok(categories);
             }
@@ -74,87 +75,56 @@ namespace EcommerceApi.Controllers
             }
         }
 
-
-        // POST api/<CategoriesController>
+        // POST api/<CategoryController>
         [HttpPost]
         public async Task<ActionResult<Category>> Post(Category category)
         {
-            category.id = Guid.NewGuid();
-            category.isActive = true;
-
-            _context.Categories.Add(category);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("Get", new { id = category.id }, category);
+            try
+            {
+                return Ok(await _categoryService.SaveCategory(category));
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                return BadRequest(e);
+            }
         }
 
-        // PUT api/<CategoriesController>/5
+        // PUT api/<CategoryController>/5
         [HttpPut("{id}")]
         public async Task<ActionResult<Category>> Put(string id, Category category)
         {
-            if (new Guid(id) != category.id) return BadRequest();
-
-            return await Update(category);
-        }
-
-        // DELETE api/<CategoriesController>/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Category>> Delete(string id)
-        {
-            var category = await _context.Categories
-                .Include(_ => _.subcategories)
-                .FirstOrDefaultAsync(_ => _.id == new Guid(id) && _.isActive == true);
-
-            if (category == null) return NotFound();
-
-            category.isActive = false;
-            category.subcategories = await GetSubcategories(category.id, true);
-
-            return await Update(category);
-        }
-        private bool CategoryExists(Guid? id)
-        {
-            return _context.Categories.Any(e => e.id == id);
-        }
-
-        private async Task<ActionResult<Category>> Update(Category category)
-        {
             try
             {
-                _context.Update(category);
-                await _context.SaveChangesAsync();
+                if (new Guid(id) != category.id) return BadRequest();
+    
+                return Ok(await _categoryService.Update(category));
             }
-            catch (DbUpdateConcurrencyException e)
+            catch (Exception e)
             {
-                if (!CategoryExists(category.id)) return NotFound();
+                if (! await _categoryService.Exist(category.id)) return NotFound();
 
                 Console.Error.WriteLine(e);
                 return BadRequest();
             }
-
-            return Ok(category);
         }
 
-        private async Task<ICollection<Category>> GetSubcategories(Guid? parentId, bool inisActive = false)
+        // DELETE api/<CategoryController>/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Category>> Delete(string id)
         {
-            var subcategories = await _context.Categories
-                   .Include(_ => _.subcategories)
-                   .Where(_ => _.parentId == parentId && _.isActive == true)
-                   .ToListAsync();
-
-            foreach (Category subcategory in subcategories)
+            try
             {
-                if (subcategory.subcategories != null)
-                {
-                    subcategory.subcategories = await GetSubcategories(subcategory.id);
-                    if (inisActive)
-                    {
-                        subcategory.isActive = false;
-                    }
-                }
+                var category = await _categoryService.DeleteCategory(new Guid(id));
+                if (category == null) return NotFound();
+
+                return Ok(category);
             }
-            
-            return subcategories;
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                return BadRequest(e);
+            }
         }
     }
 }

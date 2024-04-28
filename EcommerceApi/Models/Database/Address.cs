@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace EcommerceApi.Models.Database
 {
-    public class Address: BDEntity
+    public class Address : BDEntity
     {
         [MaxLength(100)]
         public string address { get; set; }

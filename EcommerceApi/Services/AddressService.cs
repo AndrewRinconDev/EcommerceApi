@@ -21,11 +21,6 @@ namespace EcommerceApi.Services
             return await _addressRepository.GetActiveAddressById(id);
         }
 
-        public async Task<Address?> GetAddressById(Guid id)
-        {
-            return await _addressRepository.GetById(id);
-        }
-
         public async Task<IEnumerable<Address>> GetActiveAddressByCustomerId(Guid customerId)
         {
             return await _addressRepository.GetActiveAddressByCustomerId(customerId);
@@ -38,11 +33,6 @@ namespace EcommerceApi.Services
 
             return await _addressRepository.Save(address);
         }
-        
-        public async Task<Address> UpdateAddress(Address address)
-        {
-            return await _addressRepository.Update(address);
-        }
 
         public async Task<Address?> DeleteAddress(Guid id)
         {
@@ -51,11 +41,6 @@ namespace EcommerceApi.Services
 
             address.isActive = false;
             return await _addressRepository.Update(address);
-        }
-
-        public bool AddressExists(Guid? id)
-        {
-            return _addressRepository.AddressExists(id);
         }
     }
 }

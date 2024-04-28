@@ -51,5 +51,10 @@ namespace EcommerceApi.Services
         {
             _repository.DetachAllEntities();
         }
+
+        public async Task<bool> Exist(Guid id)
+        {
+            return await _repository.Exist(id);
+        }
     }
 }

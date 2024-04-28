@@ -35,12 +35,14 @@ namespace EcommerceApi.Utils
         {
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IBaseRepository<Address>, AddressRepository>();
+            services.AddScoped<IBaseRepository<Category>, CategoryRepository>();
         }
 
         private static void AddServices(IServiceCollection services)
         {
             services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
             services.AddScoped<IAddressService, AddressService>();
+            services.AddScoped<ICategoryService, CategoryService>();
         }
     }
 }

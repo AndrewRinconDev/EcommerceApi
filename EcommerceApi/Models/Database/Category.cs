@@ -3,9 +3,8 @@ using System.Text.Json.Serialization;
 
 namespace EcommerceApi.Models.Database
 {
-    public class Category
+    public class Category : BDEntity
     {
-        public Guid? id { get; set; }
         [MaxLength(50)]
         public string name { get; set; }
         public Guid? parentId { get; set; }

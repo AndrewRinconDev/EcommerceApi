@@ -11,7 +11,5 @@ namespace EcommerceApi.Repositories.Contracts
         public Task<Address?> GetActiveAddressById(Guid id);
 
         public Task<IEnumerable<Address>> GetActiveAddressByCustomerId(Guid customerId);
-
-        public bool AddressExists(Guid? id);
     }
 }

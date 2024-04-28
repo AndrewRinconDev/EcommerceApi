@@ -1,4 +1,5 @@
-﻿using EcommerceApi.Repositories.Contracts;
+﻿using EcommerceApi.Models.Database;
+using EcommerceApi.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceApi.Repositories
@@ -17,7 +18,7 @@ namespace EcommerceApi.Repositories
             return await _context.Set<T>().AsNoTracking().ToListAsync();
         }
 
-        public async Task<T> GetById(Guid id)
+        public async Task<T?> GetById(Guid id)
         {
             return await _context.Set<T>().FindAsync(id);
         }
@@ -53,6 +54,11 @@ namespace EcommerceApi.Repositories
 
             foreach (var entry in undetachedEntriesCopy)
                 entry.State = EntityState.Detached;
+        }
+
+        public async Task<bool> Exist(Guid id)
+        {
+            return await GetById(id) != null;
         }
     }
 }

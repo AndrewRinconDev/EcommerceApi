@@ -23,10 +23,5 @@ namespace EcommerceApi.Repositories
         {
             return await _context.Set<Address>().Where(_ => _.customerId == customerId && _.isActive == true).ToListAsync();
         }
-
-        public bool AddressExists(Guid? id)
-        {
-            return _context.Set<Address>().Any(e => e.id == id);
-        }
     }
 }

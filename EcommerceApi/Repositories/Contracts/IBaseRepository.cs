@@ -4,7 +4,7 @@
     {
         public Task<IEnumerable<T>> GetAll();
 
-        public Task<T> GetById(Guid id);
+        public Task<T?> GetById(Guid id);
 
         public Task DeleteById(Guid id);
 
@@ -13,6 +13,8 @@
         public Task<T> Update(T entity);
 
         public void DetachAllEntities();
+
+        public Task<bool> Exist(Guid id);
     }
 
 }
