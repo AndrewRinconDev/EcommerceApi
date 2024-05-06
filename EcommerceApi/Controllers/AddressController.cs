@@ -28,7 +28,7 @@ namespace EcommerceApi.Controllers
             catch (Exception e)
             {
                 Console.Error.WriteLine(e);
-                return NotFound();
+                return BadRequest();
             }
         }
 

@@ -3,9 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EcommerceApi.Models.Database
 {
-    public class Customer
+    public class Customer : BDEntity
     {
-        public Guid? id { get; set; }
         [MaxLength(50)]
         public string identityType { get; set; }
         [MaxLength(50)]

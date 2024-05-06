@@ -1,5 +1,6 @@
 ﻿using EcommerceApi.Context;
 using EcommerceApi.Models.Database;
+using EcommerceApi.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,11 +12,11 @@ namespace EcommerceApi.Controllers
     [ApiController]
     public class FavoriteProductController : ControllerBase
     {
-        private readonly EcommerceDbContext _context;
+        private readonly IFavoriteProductService _favoriteProductService;
 
-        public FavoriteProductController(EcommerceDbContext context)
+        public FavoriteProductController(IFavoriteProductService favoriteProductService)
         {
-            _context = context;
+            _favoriteProductService = favoriteProductService;
         }
 
         // GET: api/<FavoriteProducts>
@@ -24,7 +25,7 @@ namespace EcommerceApi.Controllers
         {
             try
             {
-                return Ok(_context.FavoriteProducts.Include(_ => _.product).ToList());
+                return Ok(_favoriteProductService.GetFavoriteProducts());
             }
             catch (Exception e)
             {
@@ -35,12 +36,11 @@ namespace EcommerceApi.Controllers
 
         // GET api/<FavoriteProducts>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<FavoriteProduct>> Get(string id)
+        public async Task<ActionResult<FavoriteProduct>> GetById(string id)
         {
             try
             {
-                var favoriteProductFound = await _context.FavoriteProducts.Include(_ => _.product)
-                .FirstOrDefaultAsync(_ => _.id == new Guid(id) && _.isActive == true);
+                var favoriteProductFound = await _favoriteProductService.GetById(new Guid(id));
 
                 if (favoriteProductFound == null) return NotFound();
 
@@ -49,7 +49,7 @@ namespace EcommerceApi.Controllers
             catch (Exception e)
             {
                 Console.Error.WriteLine(e);
-                return NotFound();
+                return BadRequest();
             }
         }
 
@@ -57,25 +57,21 @@ namespace EcommerceApi.Controllers
         [HttpGet("Customer/{customerId}")]
         public async Task<ActionResult<IEnumerable<FavoriteProduct>>> GetByCustomer(string customerId)
         {
-            var favoriteProductFound = await _context.FavoriteProducts
-                .Where(_ => _.id == new Guid(customerId) && _.isActive == true).ToListAsync();
-
-            if (favoriteProductFound == null) return NotFound();
-
-            return Ok(favoriteProductFound);
+            return Ok(await _favoriteProductService.GetByCustomer(new Guid(customerId)));
+        }
+        
+        // GET api/<FavoriteProducts>/customer/5
+        [HttpGet("Product/{customerId}/{productId}")]
+        public async Task<ActionResult<IEnumerable<FavoriteProduct>>> GetByCustomerProduct(string customerId, string productId)
+        {
+            return Ok(await _favoriteProductService.GetByCustomerProduct(new Guid(customerId), new Guid(productId)));
         }
 
         // POST api/<FavoriteProducts>
         [HttpPost]
         public async Task<ActionResult<FavoriteProduct>> Post(FavoriteProduct favoriteProduct)
         {
-            favoriteProduct.id = Guid.NewGuid();
-            favoriteProduct.isActive = true;
-
-            _context.Add(favoriteProduct);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("Get", new { id = favoriteProduct.id }, favoriteProduct);
+            return Ok(await _favoriteProductService.Save(favoriteProduct));
         }
 
         // PUT api/<FavoriteProducts>/5
@@ -86,36 +82,22 @@ namespace EcommerceApi.Controllers
 
             try
             {
-                _context.Update(favoriteProduct);
-                await _context.SaveChangesAsync();
+                return Ok(await _favoriteProductService.Update(favoriteProduct));
             }
             catch (DbUpdateConcurrencyException e)
             {
-                if (!FavoriteProductExists(new Guid(id))) return NotFound();
+                if (!await _favoriteProductService.Exist(new Guid(id))) return NotFound();
 
                 Console.Error.WriteLine(e);
                 return BadRequest();
             }
-
-            return Ok(favoriteProduct);
         }
 
         // DELETE api/<FavoriteProducts>/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> Delete(string id)
         {
-            var favoriteProduct = await _context.FavoriteProducts.FindAsync(id);
-            if (favoriteProduct == null) return NotFound();
-
-            _context.FavoriteProducts.Remove(favoriteProduct);
-            await _context.SaveChangesAsync();
-
-            return Ok(true);
-        }
-
-        private bool FavoriteProductExists(Guid? id)
-        {
-            return _context.FavoriteProducts.Any(e => e.id == id);
+            return Ok(await _favoriteProductService.DeleteById(new Guid(id)));
         }
     }
 }

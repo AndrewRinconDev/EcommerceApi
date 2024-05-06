@@ -23,13 +23,13 @@ namespace EcommerceApi.Repositories
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task DeleteById(Guid id)
+        public async Task<bool> DeleteById(Guid id)
         {
             var entity = await GetById(id);
-            if (entity != null)
-            {
-                _context.Set<T>().Remove(entity);
-            }
+            if (entity == null) return false;
+
+            _context.Set<T>().Remove(entity);
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<T> Save(T entity)

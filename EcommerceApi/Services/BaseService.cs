@@ -47,6 +47,11 @@ namespace EcommerceApi.Services
             return entity;
         }
 
+        public async Task<bool> DeleteById(Guid id)
+        {
+            return await _repository.DeleteById(id);
+        }
+
         public void DetachEntities()
         {
             _repository.DetachAllEntities();

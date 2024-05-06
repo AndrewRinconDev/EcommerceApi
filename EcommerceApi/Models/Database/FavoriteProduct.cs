@@ -2,11 +2,9 @@
 
 namespace EcommerceApi.Models.Database
 {
-    public class FavoriteProduct
+    public class FavoriteProduct : BDEntity
     {
-        public Guid? id { get; set; }
         public Guid customerId { get; set; }
-        public bool? isActive { get; set; }
         public Guid productId { get; set; }
         [JsonIgnore]
         public virtual Product? product { get; set; }

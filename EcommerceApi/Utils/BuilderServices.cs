@@ -36,6 +36,8 @@ namespace EcommerceApi.Utils
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IBaseRepository<Address>, AddressRepository>();
             services.AddScoped<IBaseRepository<Category>, CategoryRepository>();
+            services.AddScoped<IBaseRepository<Customer>, CustomerRepository>();
+            services.AddScoped<IBaseRepository<FavoriteProduct>, FavoriteProductRepository>();
         }
 
         private static void AddServices(IServiceCollection services)
@@ -43,6 +45,8 @@ namespace EcommerceApi.Utils
             services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
             services.AddScoped<IAddressService, AddressService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IFavoriteProductService, FavoriteProductService>();
         }
     }
 }

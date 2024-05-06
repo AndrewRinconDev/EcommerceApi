@@ -12,6 +12,8 @@
 
         public Task<T> Update(T entity);
 
+        public Task<bool> DeleteById(Guid id);
+
         public void DetachEntities();
 
         public Task<bool> Exist(Guid id);
