@@ -2,9 +2,8 @@
 
 namespace EcommerceApi.Models.Database
 {
-    public class Order
+    public class Order : BDEntity
     {
-        public Guid? id { get; set; }
         public double subtotal { get; set; }
         public double total { get; set; }
         public bool isPaid { get; set; }
@@ -17,6 +16,8 @@ namespace EcommerceApi.Models.Database
         public virtual Customer? customer { get; set; }
         [JsonIgnore]
         public virtual Address? address { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<Payment>? payments { get; set; }
         [JsonIgnore]
         public virtual ICollection<OrderRecord>? orderRecords { get; set; }
         [JsonIgnore]

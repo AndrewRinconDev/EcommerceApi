@@ -11,7 +11,7 @@ namespace EcommerceApi.Repositories
 
         public async Task<IEnumerable<FavoriteProduct>> GetFavoriteProducts()
         {
-            return await _context.Set<FavoriteProduct>().Include(_ => _.product).ToListAsync();
+            return await _context.Set<FavoriteProduct>().Include(_ => _.principalProductId).ToListAsync();
         }
 
         public async Task<IEnumerable<FavoriteProduct>> GetByCustomer(Guid customerId)
@@ -23,7 +23,7 @@ namespace EcommerceApi.Repositories
         public async Task<IEnumerable<FavoriteProduct>> GetByCustomerProduct(Guid customerId, Guid productId)
         {
             return await _context.Set<FavoriteProduct>()
-                .Where(_ => _.id == customerId && _.productId == productId).ToListAsync();
+                .Where(_ => _.id == customerId && _.principalProductId == productId).ToListAsync();
         }
     }
 }

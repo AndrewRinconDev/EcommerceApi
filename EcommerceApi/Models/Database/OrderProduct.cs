@@ -2,9 +2,8 @@
 
 namespace EcommerceApi.Models.Database
 {
-    public class OrderProduct
+    public class OrderProduct : BDEntity
     {
-        public Guid? id { get; set; }
         public int quantity { get; set; }
         public Guid orderId { get; set; }
         public Guid productId { get; set; }

@@ -14,8 +14,8 @@ namespace EcommerceApi.Context
         public DbSet<Address> Addresses { get; set; }
         public DbSet<FavoriteProduct> FavoriteProducts { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<PrincipalProduct> PrincipalProducts { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<OrderState> OrderStates { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderRecord> OrderRecords { get; set; }
         public DbSet<OrderProduct> OrderProducts { get; set; }
@@ -107,15 +107,7 @@ namespace EcommerceApi.Context
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .IsRequired();
 
-                b.HasOne<OrderState>("orderState")
-                    .WithMany()
-                    .HasForeignKey("orderStateId")
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .IsRequired();
-
                 b.Navigation("order");
-
-                b.Navigation("orderState");
             });
 
             modelBuilder.Entity<Product>()
