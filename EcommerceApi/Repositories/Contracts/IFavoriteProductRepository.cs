@@ -8,6 +8,6 @@ namespace EcommerceApi.Repositories.Contracts
         
         public Task<IEnumerable<FavoriteProduct>> GetByCustomer(Guid customerId);
 
-        public Task<IEnumerable<FavoriteProduct>> GetByCustomerProduct(Guid customerId, Guid productId);
+        public Task<IEnumerable<FavoriteProduct>> GetByCustomerProduct(Guid customerId, Guid principalProductId);
     }
 }

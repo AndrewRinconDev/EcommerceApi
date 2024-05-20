@@ -3,10 +3,8 @@ using EcommerceApi.Context;
 using EcommerceApi.Helpers;
 using EcommerceApi.Models.Database;
 using EcommerceApi.Models.Dto;
+using EcommerceApi.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,31 +14,42 @@ namespace EcommerceApi.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly EcommerceDbContext _context;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
-        private CryptographyHelper cryptographyHelper;
+        private readonly IUserService _userService;
 
-        public UserController(EcommerceDbContext context, IConfiguration configuration, IMapper mapper)
+        public UserController(IUserService userService, IMapper mapper)
         {
-            _context = context;
             _mapper = mapper;
-            _configuration = configuration;
-            cryptographyHelper = new CryptographyHelper(configuration);
+            _userService = userService;
         }
 
         // GET: api/<UsersController>
         [HttpGet]
-        public ActionResult<IEnumerable<User>> Get()
+        public async Task<ActionResult<IEnumerable<User>>> Get()
         {
             try
             {
-                return Ok(_context.Users.Include(_ => _.role).ToList());
+                return Ok(await _userService.GetAll());
             }
             catch (Exception e)
             {
                 Console.Error.WriteLine(e);
-                return NotFound();
+                return BadRequest();
+            }
+        }
+
+        // GET: api/<UsersController>
+        [HttpGet("Role/{roleId}")]
+        public async Task<ActionResult<IEnumerable<User>>> GetByRole(string roleId)
+        {
+            try
+            {
+                return Ok(await _userService.GetByRole(new Guid(roleId)));
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                return BadRequest();
             }
         }
 
@@ -50,8 +59,7 @@ namespace EcommerceApi.Controllers
         {
             try
             {
-                var userFound = await _context.Users.Include(_ => _.role)
-                .FirstOrDefaultAsync(u => u.id == new Guid(id));
+                var userFound = await _userService.GetById(new Guid(id));
 
                 if (userFound == null) return NotFound();
 
@@ -60,7 +68,7 @@ namespace EcommerceApi.Controllers
             catch (Exception e)
             {
                 Console.Error.WriteLine(e);
-                return NotFound();
+                return BadRequest();
             }
         }
 
@@ -68,93 +76,81 @@ namespace EcommerceApi.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> Post(UserDto userDto)
         {
-            var user = _mapper.Map<User>(userDto);
-            user.id = Guid.NewGuid();
-            user.password = cryptographyHelper.Encrypt(user.password);
-            user.isActive = true;
+            try
+            {
+                return await _userService.SaveUser(userDto);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+        // POST api/<UsersController>/Login
+        [HttpPost("Login")]
+        public async Task<ActionResult<UserDto?>> Login(UserLoginDto userLoginDto)
+        {
+            try
+            {
+                return await _userService.Login(userLoginDto);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
 
-            return CreatedAtAction("Get", new { id = user.id }, user);
+        // POST api/<UsersController>/ChangePassword
+        /// <summary>
+        /// Password test Test123*
+        /// </summary>
+        /// <param name="userChangePasswordDto"></param>
+        /// <returns></returns>
+        [HttpPost("ChangePassword")]
+        public async Task<ActionResult<User>> ChangePassword(UserChangePasswordDto userChangePasswordDto)
+        {
+            try
+            {
+                return await _userService.ChangePassword(userChangePasswordDto);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
         public async Task<ActionResult<User>> Put(string id, UserDto userDto)
         {
-            var user = _mapper.Map<User>(userDto);
-            if (new Guid(id) != user.id) return BadRequest();
-
-            var oldUser = _context.Users.FirstOrDefault(u => u.id == new Guid(id));
-            if (oldUser == null) return NotFound();
-
-            if (user.password != oldUser.password)
+            try
             {
-                user.password = cryptographyHelper.Encrypt(user.password);
+                if (new Guid(id) != userDto.id) return BadRequest();
+
+                return await _userService.UpdateUser(userDto);
             }
+            catch (Exception e)
+            {
+                if (!await _userService.Exist(new Guid(id))) return NotFound();
 
-            return await Update(user);
-        }
-        // PUT api/<UsersController>/Reactive/5
-        [HttpPut("Reactive/{id}")]
-        public async Task<ActionResult<User>> Reactive(string id, User user)
-        {
-            if (new Guid(id) != user.id) return BadRequest();
-
-            return await UpdateUserActive(user, true);
+                return BadRequest(e.Message);
+            }
         }
 
         // DELETE api/<UsersController>/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> Delete(string id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null) return NotFound();
-
-            return await UpdateUserActive(user, false);
-        }
-
-        private bool UserExists(Guid? id)
-        {
-            if(id == null) return false;
-
-            return _context.Users.Any(e => e.id == id);
-        }
-
-        private async Task<ActionResult<User>> Update(User user)
+        public async Task<ActionResult<User?>> Delete(string id)
         {
             try
             {
-                _context.Update(user);
-                await _context.SaveChangesAsync();
+                return await _userService.DeleteUser(new Guid(id));
             }
-            catch (DbUpdateConcurrencyException e)
+            catch (Exception e)
             {
-                if (!UserExists(user.id)) return NotFound();
+                if (!await _userService.Exist(new Guid(id))) return NotFound();
 
-                Console.Error.WriteLine(e);
-                return BadRequest();
+                return BadRequest(e.Message);
             }
-
-            return Ok(user);
-        }
-
-        private async Task<ActionResult<User>> UpdateUserActive(User user, bool isActive = false)
-        {
-            user.isActive = isActive;
-            var userCustomer = await _context.Customers
-                .Include(_ => _.addresses)
-                .Include(_ => _.favoriteProducts)
-                .FirstOrDefaultAsync(_ => _.userId == user.id);
-
-            if (userCustomer != null)
-            {
-                //CustomersController customersController = new CustomersController(_context, _mapper, _configuration);
-                //await customersController.UpdateCustomerActive(userCustomer, isActive);
-            }
-
-            return await Update(user);
         }
     }
 }

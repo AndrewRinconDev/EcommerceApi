@@ -21,11 +21,11 @@ namespace EcommerceApi.Controllers
 
         // GET: api/<FavoriteProducts>
         [HttpGet]
-        public ActionResult<IEnumerable<FavoriteProduct>> Get()
+        public async Task<ActionResult<IEnumerable<FavoriteProduct>>> Get()
         {
             try
             {
-                return Ok(_favoriteProductService.GetFavoriteProducts());
+                return Ok(await _favoriteProductService.GetFavoriteProducts());
             }
             catch (Exception e)
             {

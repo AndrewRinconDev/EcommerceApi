@@ -11,19 +11,19 @@ namespace EcommerceApi.Repositories
 
         public async Task<IEnumerable<FavoriteProduct>> GetFavoriteProducts()
         {
-            return await _context.Set<FavoriteProduct>().Include(_ => _.principalProductId).ToListAsync();
+            return await _context.Set<FavoriteProduct>().Include(_ => _.principalProduct).ToListAsync();
         }
 
         public async Task<IEnumerable<FavoriteProduct>> GetByCustomer(Guid customerId)
         {
             return await _context.Set<FavoriteProduct>()
-                .Where(_ => _.id == customerId).ToListAsync();
+                .Where(_ => _.customerId == customerId).ToListAsync();
         }
         
-        public async Task<IEnumerable<FavoriteProduct>> GetByCustomerProduct(Guid customerId, Guid productId)
+        public async Task<IEnumerable<FavoriteProduct>> GetByCustomerProduct(Guid customerId, Guid principalProductId)
         {
             return await _context.Set<FavoriteProduct>()
-                .Where(_ => _.id == customerId && _.principalProductId == productId).ToListAsync();
+                .Where(_ => _.customerId == customerId && _.principalProductId == principalProductId).ToListAsync();
         }
     }
 }

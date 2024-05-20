@@ -74,6 +74,11 @@ namespace EcommerceApi.Helpers
             }
         }
 
+        public bool Compare(string text, string textEncrypted)
+        {
+            return text == Decrypt(textEncrypted);
+        }
+
         public string GenerateSalt()
         {
             Random random = new Random();

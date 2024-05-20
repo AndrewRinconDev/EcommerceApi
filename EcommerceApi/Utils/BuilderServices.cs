@@ -38,15 +38,20 @@ namespace EcommerceApi.Utils
             services.AddScoped<IBaseRepository<Category>, CategoryRepository>();
             services.AddScoped<IBaseRepository<Customer>, CustomerRepository>();
             services.AddScoped<IBaseRepository<FavoriteProduct>, FavoriteProductRepository>();
+            services.AddScoped<IBaseRepository<Feature>, FeatureRepository>();
+            services.AddScoped<IBaseRepository<User>, UserRepository>();
         }
 
         private static void AddServices(IServiceCollection services)
         {
             services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
             services.AddScoped<IAddressService, AddressService>();
+            services.AddScoped<IAuthorizationService, AuthorizationService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IFavoriteProductService, FavoriteProductService>();
+            services.AddScoped<IFeatureService, FeatureService>();
+            services.AddScoped<IUserService, UserService>();
         }
     }
 }

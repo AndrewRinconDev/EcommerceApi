@@ -36,9 +36,9 @@ namespace EcommerceApi.Controllers
 
         // GET api/<ProductsController>/5
         [HttpGet("Category/{categoryId}")]
-        public async Task<ActionResult<IEnumerable<Product>>> GetByCategory(string categoryId)
+        public async Task<ActionResult<IEnumerable<PrincipalProduct>>> GetByCategory(string categoryId)
         {
-            var productsFound = await _context.Products
+            var productsFound = await _context.PrincipalProducts
                 .Where(_ => _.categoryId == new Guid(categoryId) && _.isActive).ToListAsync();
 
             if (productsFound == null) return NotFound();

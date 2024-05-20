@@ -2,7 +2,7 @@
 {
     public interface IBaseService<T> where T : class
     {
-        public Task<List<T>> GetAll();
+        public Task<IEnumerable<T>> GetAll();
 
         public Task<T> GetById(Guid id);
 

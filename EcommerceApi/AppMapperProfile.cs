@@ -8,8 +8,8 @@ namespace EcommerceApi
     {
         public AppMapperProfile()
         {
-            CreateMap<UserDto, User>();
-            CreateMap<CustomerDto, Customer>();
+            CreateMap<UserDto, User>().ReverseMap();
+            CreateMap<CustomerDto, Customer>().ReverseMap();
         }
     }
 }

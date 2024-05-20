@@ -50,15 +50,15 @@ namespace EcommerceApi.Context
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .IsRequired();
 
-                b.HasOne<Product>("product")
+                b.HasOne<PrincipalProduct>("principalProduct")
                     .WithMany()
-                    .HasForeignKey("productId")
+                    .HasForeignKey("principalProductId")
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .IsRequired();
 
                 b.Navigation("customer");
 
-                b.Navigation("product");
+                b.Navigation("principalProduct");
             });
 
             modelBuilder.Entity<Order>(b =>
@@ -110,7 +110,7 @@ namespace EcommerceApi.Context
                 b.Navigation("order");
             });
 
-            modelBuilder.Entity<Product>()
+            modelBuilder.Entity<PrincipalProduct>()
                 .HasOne<Category>("category")
                 .WithMany()
                 .HasForeignKey("categoryId")
