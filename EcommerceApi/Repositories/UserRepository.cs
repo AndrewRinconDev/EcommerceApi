@@ -42,6 +42,7 @@ namespace EcommerceApi.Repositories
             return await _context.Set<User>()
                 .Where(_ => _.email == userLoginDto.email && _.password == encryptedPassword)
                 .Include(_ => _.role)
+                    .ThenInclude(_ => _.permissions)
                 .FirstOrDefaultAsync();
         }
     }

@@ -20,7 +20,7 @@ public class BaseController<U, T> : ControllerBase, IBaseController<T> where U :
     }
 
     [HttpGet()]
-    //[Authorize("BasicRead")]
+    [Authorize("BasicRead")]
     public async Task<ActionResult<IEnumerable<T>>> GetAll()
     {
         IEnumerable<U> list = await _baseService.GetAll();
@@ -28,7 +28,7 @@ public class BaseController<U, T> : ControllerBase, IBaseController<T> where U :
     }
 
     [HttpGet("{id}")]
-    //[Authorize("BasicRead")]
+    [Authorize("BasicRead")]
     public async Task<ActionResult<T>> GetById(string id)
     {
         U entity = await _baseService.GetById(new Guid(id));
@@ -36,7 +36,7 @@ public class BaseController<U, T> : ControllerBase, IBaseController<T> where U :
     }
 
     [HttpPost()]
-    //[Authorize("BasicWrite")]
+    [Authorize("BasicWrite")]
     public async Task<ActionResult<T>> SaveEntity([FromBody] T entity)
     {
         U entitySaved = await _baseService.Save(_mapper.Map<T, U>(entity));
@@ -44,7 +44,7 @@ public class BaseController<U, T> : ControllerBase, IBaseController<T> where U :
     }
 
     [HttpPut()]
-    //[Authorize("BasicWrite")]
+    [Authorize("BasicWrite")]
     public async Task<ActionResult<T>> UpdateEntity([FromBody] T entity)
     {
         U entitySaved = await _baseService.Update(_mapper.Map<T, U>(entity));
@@ -52,7 +52,7 @@ public class BaseController<U, T> : ControllerBase, IBaseController<T> where U :
     }
 
     [HttpDelete("{id}")]
-    //[Authorize("BasicWrite")]
+    [Authorize("BasicWrite")]
     public async Task<ActionResult<bool>> DeleteEntity(string id)
     {
         return Ok(await _baseService.DeleteById(new Guid(id)));

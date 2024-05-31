@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using EcommerceApi.Context;
-using EcommerceApi.Helpers;
 using EcommerceApi.Models.Database;
 using EcommerceApi.Models.Dto;
 using EcommerceApi.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -25,6 +24,7 @@ namespace EcommerceApi.Controllers
 
         // GET: api/<UsersController>
         [HttpGet]
+        [Authorize("BasicRead")]
         public async Task<ActionResult<IEnumerable<User>>> Get()
         {
             try
@@ -40,6 +40,7 @@ namespace EcommerceApi.Controllers
 
         // GET: api/<UsersController>
         [HttpGet("Role/{roleId}")]
+        [Authorize("BasicRead")]
         public async Task<ActionResult<IEnumerable<User>>> GetByRole(string roleId)
         {
             try
@@ -55,6 +56,7 @@ namespace EcommerceApi.Controllers
 
         // GET api/<UsersController>/5
         [HttpGet("{id}")]
+        [Authorize("BasicRead")]
         public async Task<ActionResult<User>> Get(string id)
         {
             try
@@ -74,6 +76,7 @@ namespace EcommerceApi.Controllers
 
         // POST api/<UsersController>
         [HttpPost]
+        [Authorize("BasicWrite")]
         public async Task<ActionResult<User>> Post(UserDto userDto)
         {
             try
@@ -107,6 +110,7 @@ namespace EcommerceApi.Controllers
         /// <param name="userChangePasswordDto"></param>
         /// <returns></returns>
         [HttpPost("ChangePassword")]
+        [Authorize("BasicWrite")]
         public async Task<ActionResult<User>> ChangePassword(UserChangePasswordDto userChangePasswordDto)
         {
             try
@@ -121,6 +125,7 @@ namespace EcommerceApi.Controllers
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
+        [Authorize("AdminWrite")]
         public async Task<ActionResult<User>> Put(string id, UserDto userDto)
         {
             try
@@ -139,6 +144,7 @@ namespace EcommerceApi.Controllers
 
         // DELETE api/<UsersController>/5
         [HttpDelete("{id}")]
+        [Authorize("AdminWrite")]
         public async Task<ActionResult<User?>> Delete(string id)
         {
             try

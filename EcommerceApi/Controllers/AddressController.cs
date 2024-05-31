@@ -1,5 +1,6 @@
 ﻿using EcommerceApi.Models.Database;
 using EcommerceApi.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -8,6 +9,7 @@ namespace EcommerceApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AddressController : ControllerBase
     {
         private readonly IAddressService _addressService;
@@ -19,6 +21,7 @@ namespace EcommerceApi.Controllers
 
         // GET: api/<AddressController>
         [HttpGet]
+        [Authorize("BasicRead")]
         public async Task<ActionResult<IEnumerable<Address>>> Get()
         {
             try
@@ -34,6 +37,7 @@ namespace EcommerceApi.Controllers
 
         // GET api/<AddressController>/5
         [HttpGet("{id}")]
+        [Authorize("BasicRead")]
         public async Task<ActionResult<Address>> Get(string id)
         {
             var addressFound = await _addressService.GetActiveAddressById(new Guid(id));
@@ -45,6 +49,7 @@ namespace EcommerceApi.Controllers
 
         // GET api/<AddressController>/customer/5
         [HttpGet("Customer/{customerId}")]
+        [Authorize("BasicRead")]
         public async Task<ActionResult<IEnumerable<Address>>> GetByCustomer(string customerId)
         {
             var addressesFound = await _addressService.GetActiveAddressByCustomerId(new Guid(customerId));
@@ -56,6 +61,7 @@ namespace EcommerceApi.Controllers
 
         // POST api/<AddressController>
         [HttpPost]
+        [Authorize("BasicWrite")]
         public async Task<ActionResult<Address>> Post(Address address)
         {
             try
@@ -71,6 +77,7 @@ namespace EcommerceApi.Controllers
 
         // PUT api/<AddressController>/5
         [HttpPut("{id}")]
+        [Authorize("BasicWrite")]
         public async Task<ActionResult<Address>> Put(string id, Address address)
         {
             try
@@ -90,6 +97,7 @@ namespace EcommerceApi.Controllers
 
         // DELETE api/<AddressController>/5
         [HttpDelete("{id}")]
+        [Authorize("BasicWrite")]
         public async Task<ActionResult<Address>> Delete(string id)
         {
             try

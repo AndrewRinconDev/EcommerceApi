@@ -53,6 +53,7 @@ namespace EcommerceApi.Services
 
             UserDto userDto = _mapper.Map<UserDto>(userLogged);
             userDto.token = await _authorizationService.GenerateToken(userLogged);
+            userDto.permissions = userLogged.role?.permissions.Select(_ => _.name).ToList();
             return userDto;
         }
 

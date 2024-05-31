@@ -2,6 +2,7 @@
 using EcommerceApi.Models.Database;
 using EcommerceApi.Models.Dto;
 using EcommerceApi.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -10,6 +11,7 @@ namespace EcommerceApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
@@ -23,6 +25,7 @@ namespace EcommerceApi.Controllers
 
         // GET: api/<CustomersController>
         [HttpGet]
+        [Authorize("BasicRead")]
         public async Task<ActionResult<IEnumerable<Customer>>> Get()
         {
             try
@@ -38,6 +41,7 @@ namespace EcommerceApi.Controllers
 
         // GET api/<CustomersController>/5
         [HttpGet("{id}")]
+        [Authorize("BasicRead")]
         public async Task<ActionResult<Customer>> Get(string id)
         {
             try
@@ -57,6 +61,7 @@ namespace EcommerceApi.Controllers
 
         // POST api/<CustomersController>
         [HttpPost]
+        [Authorize("BasicWrite")]
         public async Task<ActionResult<Customer>> Post(CustomerDto customerDto)
         {
             var customer = _mapper.Map<Customer>(customerDto);
@@ -68,6 +73,7 @@ namespace EcommerceApi.Controllers
 
         // PUT api/<CustomersController>/5
         [HttpPut("{id}")]
+        [Authorize("BasicWrite")]
         public async Task<ActionResult<Customer>> Put(string id, CustomerDto customerDto)
         {
             Guid userId = new Guid(id);
@@ -82,6 +88,7 @@ namespace EcommerceApi.Controllers
 
         // PUT api/<CustomersController>/Reactive/5
         [HttpPut("Reactive/{id}")]
+        [Authorize("AdminWrite")]
         public async Task<ActionResult<Customer>> Reactive(string id, Customer customer)
         {
             if (_customerService.UserExists(new Guid(id), customer.userId)) return BadRequest("User already is a customer");
@@ -91,6 +98,7 @@ namespace EcommerceApi.Controllers
 
         //DELETE api/<CustomersController>/5
         [HttpDelete("{id}")]
+        [Authorize("AdminWrite")]
         public async Task<ActionResult<Customer>> Delete(string id)
         {
             var customer = await _customerService.DeleteCustomer(new Guid(id));

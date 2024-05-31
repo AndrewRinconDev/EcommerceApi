@@ -1,5 +1,6 @@
 ﻿using EcommerceApi.Models.Database;
 using EcommerceApi.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -8,6 +9,7 @@ namespace EcommerceApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
@@ -19,6 +21,7 @@ namespace EcommerceApi.Controllers
 
         // GET: api/<CategoryController>
         [HttpGet]
+        [Authorize("BasicRead")]
         public async Task<ActionResult<IEnumerable<Category>>> Get()
         {
             try
@@ -34,6 +37,7 @@ namespace EcommerceApi.Controllers
 
         // GET: api/<CategoryController>/All
         [HttpGet("All")]
+        [Authorize("BasicRead")]
         public async Task<ActionResult<IEnumerable<Category>>> GetAll()
         {
             try
@@ -49,6 +53,7 @@ namespace EcommerceApi.Controllers
 
         // GET api/<CategoryController>/5
         [HttpGet("{id}")]
+        [Authorize("BasicRead")]
         public async Task<ActionResult<IEnumerable<Category>>> Get(string id)
         {
             var categoryFound = await _categoryService.GetActiveCategoryById(new Guid(id));
@@ -60,6 +65,7 @@ namespace EcommerceApi.Controllers
         
         // GET: api/<CategoryController>/Subcategories
         [HttpGet("GetSubcategoriesByParent/{parentId}")]
+        [Authorize("BasicRead")]
         public async Task<ActionResult<IEnumerable<Category>>> GetSubcategoriesByParent(string parentId)
         {
             try
@@ -77,6 +83,7 @@ namespace EcommerceApi.Controllers
 
         // POST api/<CategoryController>
         [HttpPost]
+        [Authorize("AdminWrite")]
         public async Task<ActionResult<Category>> Post(Category category)
         {
             try
@@ -92,6 +99,7 @@ namespace EcommerceApi.Controllers
 
         // PUT api/<CategoryController>/5
         [HttpPut("{id}")]
+        [Authorize("AdminWrite")]
         public async Task<ActionResult<Category>> Put(string id, Category category)
         {
             try
@@ -111,6 +119,7 @@ namespace EcommerceApi.Controllers
 
         // DELETE api/<CategoryController>/5
         [HttpDelete("{id}")]
+        [Authorize("AdminWrite")]
         public async Task<ActionResult<Category>> Delete(string id)
         {
             try

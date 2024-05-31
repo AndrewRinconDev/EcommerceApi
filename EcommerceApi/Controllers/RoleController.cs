@@ -1,5 +1,6 @@
 ﻿using EcommerceApi.Context;
 using EcommerceApi.Models.Database;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -10,6 +11,7 @@ namespace EcommerceApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RoleController : ControllerBase
     {
         private readonly EcommerceDbContext _context;
@@ -21,6 +23,7 @@ namespace EcommerceApi.Controllers
 
         // GET: api/<RolesController>
         [HttpGet]
+        [Authorize("BasicRead")]
         public ActionResult<IEnumerable<Role>> Get()
         {
             return Ok(_context.Roles.ToList());
@@ -28,6 +31,7 @@ namespace EcommerceApi.Controllers
 
         // GET api/<RolesController>/5
         [HttpGet("{id}")]
+        [Authorize("BasicRead")]
         public async Task<ActionResult<Role>> Get(string id)
         {
             var roleFound = await _context.Roles.FindAsync(id);
@@ -39,6 +43,7 @@ namespace EcommerceApi.Controllers
 
         // POST api/<RolesController>
         [HttpPost]
+        [Authorize("AdminWrite")]
         public async Task<ActionResult<Role>> Post(Role role)
         {
             role.id = Guid.NewGuid();
@@ -50,6 +55,7 @@ namespace EcommerceApi.Controllers
 
         // PUT api/<RolesController>/5
         [HttpPut("{id}")]
+        [Authorize("AdminWrite")]
         public async Task<ActionResult<Role>> Put(string id, Role role)
         {
             if (new Guid(id) != role.id) return BadRequest();
@@ -72,6 +78,7 @@ namespace EcommerceApi.Controllers
 
         // DELETE api/<RolesController>/5
         [HttpDelete("{id}")]
+        [Authorize("AdminWrite")]
         public async Task<ActionResult<bool>> Delete(string id)
         {
             var role = _context.Roles.Find(id);

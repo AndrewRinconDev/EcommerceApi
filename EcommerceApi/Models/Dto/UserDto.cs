@@ -10,5 +10,6 @@
         public Guid roleId { get; set; }
         public bool? isActive { get; set; }
         public string? token { get; set; }
+        public List<string>? permissions { get; set; }
     }
 }
