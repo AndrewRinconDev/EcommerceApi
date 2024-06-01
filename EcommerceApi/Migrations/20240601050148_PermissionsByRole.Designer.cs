@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcommerceApi.Migrations
 {
     [DbContext(typeof(EcommerceDbContext))]
-    [Migration("20240531024210_PermissionsByRole")]
+    [Migration("20240601050148_PermissionsByRole")]
     partial class PermissionsByRole
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -378,9 +378,6 @@ namespace EcommerceApi.Migrations
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("permissionType")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("roleId")
                         .HasColumnType("uniqueidentifier");
 
@@ -453,6 +450,9 @@ namespace EcommerceApi.Migrations
                     b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("isActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("name")
                         .IsRequired()
@@ -653,7 +653,7 @@ namespace EcommerceApi.Migrations
             modelBuilder.Entity("EcommerceApi.Models.Database.Permission", b =>
                 {
                     b.HasOne("EcommerceApi.Models.Database.Role", "role")
-                        .WithMany("Permissions")
+                        .WithMany("permissions")
                         .HasForeignKey("roleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -739,7 +739,7 @@ namespace EcommerceApi.Migrations
 
             modelBuilder.Entity("EcommerceApi.Models.Database.Role", b =>
                 {
-                    b.Navigation("Permissions");
+                    b.Navigation("permissions");
                 });
 
             modelBuilder.Entity("EcommerceApi.Models.Database.User", b =>

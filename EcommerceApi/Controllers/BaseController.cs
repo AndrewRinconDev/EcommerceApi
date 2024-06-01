@@ -3,6 +3,7 @@ using EcommerceApi.Controllers.Contracts;
 using EcommerceApi.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceApi.Controllers;
 
@@ -31,7 +32,10 @@ public class BaseController<U, T> : ControllerBase, IBaseController<T> where U :
     [Authorize("BasicRead")]
     public async Task<ActionResult<T>> GetById(string id)
     {
-        U entity = await _baseService.GetById(new Guid(id));
+        U? entity = await _baseService.GetById(new Guid(id));
+
+        if (entity == null) return NotFound();
+
         return Ok(_mapper.Map<U, T>(entity));
     }
 
@@ -39,22 +43,48 @@ public class BaseController<U, T> : ControllerBase, IBaseController<T> where U :
     [Authorize("BasicWrite")]
     public async Task<ActionResult<T>> SaveEntity([FromBody] T entity)
     {
-        U entitySaved = await _baseService.Save(_mapper.Map<T, U>(entity));
-        return Ok(_mapper.Map<U, T>(entitySaved));
+        try
+        {
+            U entitySaved = await _baseService.Save(_mapper.Map<T, U>(entity));
+            return Ok(_mapper.Map<U, T>(entitySaved));
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine(e);
+            return BadRequest();
+        }
     }
 
-    [HttpPut()]
+    [HttpPut("{id}")]
     [Authorize("BasicWrite")]
-    public async Task<ActionResult<T>> UpdateEntity([FromBody] T entity)
+    public async Task<ActionResult<T>> UpdateEntity(string id, [FromBody] T entity)
     {
-        U entitySaved = await _baseService.Update(_mapper.Map<T, U>(entity));
-        return Ok(_mapper.Map<U, T>(entitySaved));
+        try
+        {
+            U entitySaved = await _baseService.Update(_mapper.Map<T, U>(entity));
+            return Ok(_mapper.Map<U, T>(entitySaved));
+        }
+        catch (DbUpdateConcurrencyException e)
+        {
+            if (!await _baseService.Exist(new Guid(id))) return NotFound();
+
+            Console.Error.WriteLine(e);
+            return BadRequest();
+        }
     }
 
     [HttpDelete("{id}")]
     [Authorize("BasicWrite")]
     public async Task<ActionResult<bool>> DeleteEntity(string id)
     {
+        try
+        {
         return Ok(await _baseService.DeleteById(new Guid(id)));
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine(e);
+            return BadRequest();
+        }
     }
 }

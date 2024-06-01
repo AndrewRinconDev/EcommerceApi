@@ -18,7 +18,7 @@ namespace EcommerceApi.Services
             return await _repository.GetAll();
         }
 
-        public async Task<T> GetById(Guid id)
+        public async Task<T?> GetById(Guid id)
         {
             return await _repository.GetById(id);
         }

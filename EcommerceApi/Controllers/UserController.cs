@@ -25,11 +25,12 @@ namespace EcommerceApi.Controllers
         // GET: api/<UsersController>
         [HttpGet]
         [Authorize("BasicRead")]
-        public async Task<ActionResult<IEnumerable<User>>> Get()
+        public async Task<ActionResult<IEnumerable<UserDto>>> Get()
         {
             try
             {
-                return Ok(await _userService.GetAll());
+                IEnumerable<User> users = await _userService.GetAll();
+                return Ok(_mapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(users));
             }
             catch (Exception e)
             {
@@ -41,11 +42,12 @@ namespace EcommerceApi.Controllers
         // GET: api/<UsersController>
         [HttpGet("Role/{roleId}")]
         [Authorize("BasicRead")]
-        public async Task<ActionResult<IEnumerable<User>>> GetByRole(string roleId)
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetByRole(string roleId)
         {
             try
             {
-                return Ok(await _userService.GetByRole(new Guid(roleId)));
+                IEnumerable<User> users = await _userService.GetByRole(new Guid(roleId));
+                return Ok(_mapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(users));
             }
             catch (Exception e)
             {
@@ -57,7 +59,7 @@ namespace EcommerceApi.Controllers
         // GET api/<UsersController>/5
         [HttpGet("{id}")]
         [Authorize("BasicRead")]
-        public async Task<ActionResult<User>> Get(string id)
+        public async Task<ActionResult<UserDto>> Get(string id)
         {
             try
             {
@@ -65,7 +67,7 @@ namespace EcommerceApi.Controllers
 
                 if (userFound == null) return NotFound();
 
-                return Ok(userFound);
+                return Ok(_mapper.Map<User, UserDto>(userFound));
             }
             catch (Exception e)
             {
@@ -81,7 +83,8 @@ namespace EcommerceApi.Controllers
         {
             try
             {
-                return await _userService.SaveUser(userDto);
+                User userSaved = await _userService.SaveUser(userDto);
+                return Ok(_mapper.Map<User, UserDto>(userSaved));
             }
             catch (Exception e)
             {
@@ -91,7 +94,7 @@ namespace EcommerceApi.Controllers
 
         // POST api/<UsersController>/Login
         [HttpPost("Login")]
-        public async Task<ActionResult<UserDto?>> Login(UserLoginDto userLoginDto)
+        public async Task<ActionResult<UserLoggedDto?>> Login(UserLoginDto userLoginDto)
         {
             try
             {
@@ -111,11 +114,12 @@ namespace EcommerceApi.Controllers
         /// <returns></returns>
         [HttpPost("ChangePassword")]
         [Authorize("BasicWrite")]
-        public async Task<ActionResult<User>> ChangePassword(UserChangePasswordDto userChangePasswordDto)
+        public async Task<ActionResult<UserDto>> ChangePassword(UserChangePasswordDto userChangePasswordDto)
         {
             try
             {
-                return await _userService.ChangePassword(userChangePasswordDto);
+                User userUpdated = await _userService.ChangePassword(userChangePasswordDto);
+                return Ok(_mapper.Map<User, UserDto>(userUpdated));
             }
             catch (Exception e)
             {
@@ -126,13 +130,14 @@ namespace EcommerceApi.Controllers
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
         [Authorize("AdminWrite")]
-        public async Task<ActionResult<User>> Put(string id, UserDto userDto)
+        public async Task<ActionResult<UserDto>> Put(string id, UserDto userDto)
         {
             try
             {
                 if (new Guid(id) != userDto.id) return BadRequest();
 
-                return await _userService.UpdateUser(userDto);
+                User userUpdated = await _userService.UpdateUser(userDto);
+                return Ok(_mapper.Map<User, UserDto>(userUpdated));
             }
             catch (Exception e)
             {
@@ -145,11 +150,12 @@ namespace EcommerceApi.Controllers
         // DELETE api/<UsersController>/5
         [HttpDelete("{id}")]
         [Authorize("AdminWrite")]
-        public async Task<ActionResult<User?>> Delete(string id)
+        public async Task<ActionResult<UserDto?>> Delete(string id)
         {
             try
             {
-                return await _userService.DeleteUser(new Guid(id));
+                User? userDeleted = await _userService.DeleteUser(new Guid(id));
+                return Ok(_mapper.Map<User, UserDto>(userDeleted));
             }
             catch (Exception e)
             {

@@ -7,7 +7,7 @@ namespace EcommerceApi.Services.Contracts
     {
         public Task<IEnumerable<User>> GetByRole(Guid roleId);
 
-        public Task<UserDto?> Login(UserLoginDto userLoginDto);
+        public Task<UserLoggedDto?> Login(UserLoginDto userLoginDto);
 
         public Task<User> SaveUser(UserDto user);
 

@@ -54,10 +54,10 @@ namespace EcommerceApi.Utils
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("BasicRead",
-                    policy => policy.RequireClaim("permissions", "super:admin", "admin:read", "basic:read", "visual:read"));
+                    policy => policy.RequireClaim("permissions", "super:admin", "admin:read", "basic:read", "visualize:read"));
 
                 options.AddPolicy("BasicWrite",
-                    policy => policy.RequireClaim("permissions", "super:admin", "admin:write", "basic:write", "visual:write"));
+                    policy => policy.RequireClaim("permissions", "super:admin", "admin:write", "basic:write", "visualize:write"));
 
                 options.AddPolicy("AdminWrite",
                     policy => policy.RequireClaim("permissions", "super:admin", "admin:write"));
@@ -74,6 +74,8 @@ namespace EcommerceApi.Utils
             services.AddScoped<IBaseRepository<Customer>, CustomerRepository>();
             services.AddScoped<IBaseRepository<FavoriteProduct>, FavoriteProductRepository>();
             services.AddScoped<IBaseRepository<Feature>, FeatureRepository>();
+            services.AddScoped<IBaseRepository<Permission>, PermissionRepository>();
+            services.AddScoped<IBaseRepository<Role>, RoleRepository>();
             services.AddScoped<IBaseRepository<User>, UserRepository>();
         }
 
@@ -86,6 +88,8 @@ namespace EcommerceApi.Utils
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IFavoriteProductService, FavoriteProductService>();
             services.AddScoped<IFeatureService, FeatureService>();
+            services.AddScoped<IPermissionService, PermissionService>();
+            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IUserService, UserService>();
         }
 

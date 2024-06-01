@@ -103,6 +103,12 @@ namespace EcommerceApi.Migrations
                 table: "Features",
                 newName: "IX_Features_featureCategoryId");
 
+            migrationBuilder.AddColumn<bool>(
+                name: "isActive",
+                table: "Roles",
+                type: "bit",
+                nullable: true);
+
             migrationBuilder.AddPrimaryKey(
                 name: "PK_PaymentCards",
                 table: "PaymentCards",
@@ -134,7 +140,6 @@ namespace EcommerceApi.Migrations
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    permissionType = table.Column<int>(type: "int", nullable: true),
                     roleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -249,6 +254,10 @@ namespace EcommerceApi.Migrations
             migrationBuilder.DropPrimaryKey(
                 name: "PK_FeatureCategories",
                 table: "FeatureCategories");
+
+            migrationBuilder.DropColumn(
+                name: "isActive",
+                table: "Roles");
 
             migrationBuilder.RenameTable(
                 name: "Payments",

@@ -46,12 +46,12 @@ namespace EcommerceApi.Services
             return await Update(user);
         }
 
-        public async Task<UserDto?> Login(UserLoginDto userLoginDto)
+        public async Task<UserLoggedDto?> Login(UserLoginDto userLoginDto)
         {
             var userLogged = await _UserRepository.Login(userLoginDto);
             if (userLogged == null) throw new Exception("Invalid email or password");
 
-            UserDto userDto = _mapper.Map<UserDto>(userLogged);
+            UserLoggedDto userDto = _mapper.Map<User, UserLoggedDto>(userLogged);
             userDto.token = await _authorizationService.GenerateToken(userLogged);
             userDto.permissions = userLogged.role?.permissions.Select(_ => _.name).ToList();
             return userDto;

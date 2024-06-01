@@ -9,6 +9,6 @@ public interface IBaseController<T> where T : class
 
     public Task<ActionResult<T>> SaveEntity(T entity);
 
-    public Task<ActionResult<T>> UpdateEntity(T entity);
+    public Task<ActionResult<T>> UpdateEntity(string id, T entity);
 }
 

@@ -1,8 +1,9 @@
-﻿using EcommerceApi.Models.Database;
+﻿using AutoMapper;
+using EcommerceApi.Models.Database;
+using EcommerceApi.Models.Dto;
 using EcommerceApi.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -11,23 +12,26 @@ namespace EcommerceApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class FavoriteProductController : ControllerBase
+    public class FavoriteProductController : BaseController<FavoriteProduct, FavoriteProductDto>
     {
         private readonly IFavoriteProductService _favoriteProductService;
+        private readonly IMapper _mapper;
 
-        public FavoriteProductController(IFavoriteProductService favoriteProductService)
+        public FavoriteProductController(IMapper mapper, IFavoriteProductService baseService) : base(mapper, baseService)
         {
-            _favoriteProductService = favoriteProductService;
+            _favoriteProductService = baseService;
+            _mapper = mapper;
         }
 
         // GET: api/<FavoriteProducts>
-        [HttpGet]
+        [HttpGet("GetIncludeProduct")]
         [Authorize("BasicRead")]
-        public async Task<ActionResult<IEnumerable<FavoriteProduct>>> Get()
+        public async Task<ActionResult<IEnumerable<FavoriteProductDto>>> GetIncludeProduct()
         {
             try
             {
-                return Ok(await _favoriteProductService.GetFavoriteProducts());
+                IEnumerable<FavoriteProduct> favoriteProducts = await _favoriteProductService.GetFavoriteProducts();
+                return Ok(_mapper.Map<IEnumerable<FavoriteProduct>, IEnumerable<FavoriteProductDto>>(favoriteProducts));
             }
             catch (Exception e)
             {
@@ -36,76 +40,38 @@ namespace EcommerceApi.Controllers
             }
         }
 
-        // GET api/<FavoriteProducts>/5
-        [HttpGet("{id}")]
+        // GET api/<FavoriteProducts>/customer/5
+        [HttpGet("Customer/{customerId}")]
         [Authorize("BasicRead")]
-        public async Task<ActionResult<FavoriteProduct>> GetById(string id)
+        public async Task<ActionResult<IEnumerable<FavoriteProductDto>>> GetByCustomer(string customerId)
         {
             try
             {
-                var favoriteProductFound = await _favoriteProductService.GetById(new Guid(id));
-
-                if (favoriteProductFound == null) return NotFound();
-
-                return Ok(favoriteProductFound);
+                IEnumerable<FavoriteProduct> favoriteProducts = await _favoriteProductService.GetByCustomer(new Guid(customerId));
+                return Ok(_mapper.Map<IEnumerable<FavoriteProduct>, IEnumerable<FavoriteProductDto>>(favoriteProducts));
             }
             catch (Exception e)
             {
                 Console.Error.WriteLine(e);
-                return BadRequest();
+                return NotFound();
             }
-        }
-
-        // GET api/<FavoriteProducts>/customer/5
-        [HttpGet("Customer/{customerId}")]
-        [Authorize("BasicRead")]
-        public async Task<ActionResult<IEnumerable<FavoriteProduct>>> GetByCustomer(string customerId)
-        {
-            return Ok(await _favoriteProductService.GetByCustomer(new Guid(customerId)));
         }
         
         // GET api/<FavoriteProducts>/customer/5
         [HttpGet("Product/{customerId}/{productId}")]
         [Authorize("BasicRead")]
-        public async Task<ActionResult<IEnumerable<FavoriteProduct>>> GetByCustomerProduct(string customerId, string productId)
+        public async Task<ActionResult<IEnumerable<FavoriteProductDto>>> GetByCustomerProduct(string customerId, string productId)
         {
-            return Ok(await _favoriteProductService.GetByCustomerProduct(new Guid(customerId), new Guid(productId)));
-        }
-
-        // POST api/<FavoriteProducts>
-        [HttpPost]
-        [Authorize("BasicWrite")]
-        public async Task<ActionResult<FavoriteProduct>> Post(FavoriteProduct favoriteProduct)
-        {
-            return Ok(await _favoriteProductService.Save(favoriteProduct));
-        }
-
-        // PUT api/<FavoriteProducts>/5
-        [HttpPut("{id}")]
-        [Authorize("BasicWrite")]
-        public async Task<ActionResult<FavoriteProduct>> Put(string id, FavoriteProduct favoriteProduct)
-        {
-            if (new Guid(id) != favoriteProduct.id) return BadRequest();
-
             try
             {
-                return Ok(await _favoriteProductService.Update(favoriteProduct));
+                IEnumerable<FavoriteProduct> favoriteProducts = await _favoriteProductService.GetByCustomerProduct(new Guid(customerId), new Guid(productId));
+                return Ok(_mapper.Map<IEnumerable<FavoriteProduct>, IEnumerable<FavoriteProductDto>>(favoriteProducts));
             }
-            catch (DbUpdateConcurrencyException e)
+            catch (Exception e)
             {
-                if (!await _favoriteProductService.Exist(new Guid(id))) return NotFound();
-
                 Console.Error.WriteLine(e);
-                return BadRequest();
+                return NotFound();
             }
-        }
-
-        // DELETE api/<FavoriteProducts>/5
-        [HttpDelete("{id}")]
-        [Authorize("BasicWrite")]
-        public async Task<ActionResult<bool>> Delete(string id)
-        {
-            return Ok(await _favoriteProductService.DeleteById(new Guid(id)));
         }
     }
 }
