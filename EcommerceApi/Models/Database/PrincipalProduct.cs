@@ -10,7 +10,7 @@ namespace EcommerceApi.Models.Database
         [MaxLength(300)]
         public string? description { get; set; }
         public Guid categoryId { get; set; }
-        public bool isActive { get; set; }
+        public bool isActive { get; set; } = true;
         [JsonIgnore]
         public virtual Category? category { get; set; }
         [JsonIgnore]

@@ -12,9 +12,11 @@ namespace EcommerceApi.Services.Contracts
 
         public Task<Customer> SaveCustomerUser(Customer customer);
 
+        public Task<Customer> UpdateCustomer(Guid id, Customer customer);
+
         public Task<Customer?> DeleteCustomer(Guid id);
 
-        public Task<Customer> ActiveCustomer(Customer customer, bool isActive = false);
+        public Task<Customer> ActiveCustomer(Guid id, Customer customer, bool isActive = false);
 
         public bool CustomerUserExists(Guid? userId);
 

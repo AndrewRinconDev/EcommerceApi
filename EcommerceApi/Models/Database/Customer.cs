@@ -13,7 +13,7 @@ namespace EcommerceApi.Models.Database
         public string? phoneNumber { get; set; }
         [Required]
         public Guid? userId { get; set; }
-        public bool isActive { get; set; }
+        public bool isActive { get; set; } = true;
         [JsonIgnore]
         public virtual User? user { get; set; }
         [JsonIgnore]

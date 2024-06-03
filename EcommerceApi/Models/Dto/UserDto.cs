@@ -12,6 +12,6 @@ namespace EcommerceApi.Models.Dto
         public Guid roleId { get; set; }
         public bool? isActive { get; set; }
         [JsonIgnore]
-        public virtual Role? role { get; set; }
+        public virtual RoleDto? role { get; set; }
     }
 }

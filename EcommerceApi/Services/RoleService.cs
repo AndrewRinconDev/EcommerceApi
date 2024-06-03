@@ -12,8 +12,8 @@ namespace EcommerceApi.Services
         private readonly IMapper _mapper;
         private readonly IPermissionService _permissionService;
 
-        public RoleService(IBaseRepository<Role> repository, IPermissionService permissionService, IMapper mapper) : base(repository) {
-            _roleRepository = (IRoleRepository)repository;
+        public RoleService(IRoleRepository repository, IPermissionService permissionService, IMapper mapper) : base(repository) {
+            _roleRepository = repository;
             _permissionService = permissionService;
             _mapper = mapper;
         }

@@ -8,8 +8,8 @@ namespace EcommerceApi.Services
     public class PermissionService : BaseService<Permission>, IPermissionService
     {
         IPermissionRepository _PermissionRepository;
-        public PermissionService(IBaseRepository<Permission> repository) : base(repository) {
-            _PermissionRepository = (IPermissionRepository)repository;
+        public PermissionService(IPermissionRepository repository) : base(repository) {
+            _PermissionRepository = repository;
         }
         
         public async Task<IEnumerable<Permission>> GetByRole(Guid roleId)

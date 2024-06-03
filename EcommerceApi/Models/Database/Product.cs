@@ -8,7 +8,7 @@ namespace EcommerceApi.Models.Database
         public double price { get; set; }
         public int stock { get; set; }
         public Guid principalProductId { get; set; }
-        public bool isActive { get; set; }
+        public bool isActive { get; set; } = true;
         [JsonIgnore]
         public virtual PrincipalProduct? principalProduct { get; set; }
         [JsonIgnore]

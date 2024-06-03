@@ -1,147 +1,131 @@
-using EcommerceApi.Context;
+using AutoMapper;
 using EcommerceApi.Models.Database;
+using EcommerceApi.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrderController : ControllerBase
     {
-        private readonly EcommerceDbContext _context;
+        private readonly IOrderService _orderService;
+        private readonly IMapper _mapper;
 
-        public OrderController(EcommerceDbContext context)
-        {
-            _context = context;
+        public OrderController(IMapper mapper, IOrderService orderService)
+        { 
+            _orderService = orderService;
+            _mapper = mapper;
         }
 
         // GET: api/Orders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Order>>> Get()
+        [Authorize("BasicRead")]
+        public async Task<ActionResult<IEnumerable<OrderDto>>> Get()
         {
-            return await _context.Orders
-                .Where(_ => _.isActive)
-                .Include(_ => _.customer)
-                //TODO: .ThenInclude(_ => _.user)
-                //.ThenInclude(_ => _.user)
-                .Include(_ => _.orderProducts)
-                //.ThenInclude(_ => _.product)
-                .ToListAsync();
+            try
+            {
+                var orders = await _orderService.GetAllActive();
+                return Ok(_mapper.Map<IEnumerable<OrderDto>>(orders));
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                return BadRequest(e.Message);
+            }
         }
 
         // GET: api/Orders/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Order>> Get(string id)
+        [Authorize("BasicRead")]
+        public async Task<ActionResult<Order>> GetByIdActive(string id)
         {
-            var order = _context.Orders
-                .Include(_ => _.address)
-                .Include(_ => _.customer)
-                    .ThenInclude(_ => _.user)
-                .Include(_ => _.orderProducts)
-                    .ThenInclude(_ => _.product)
-            .FirstOrDefaultAsync(_ => _.id == new Guid(id));
-
-            if (order == null)
+            try
             {
-                return NotFound();
+                var order = await _orderService.GetByIdActive(new Guid(id));
+                if (order == null) return NotFound();
+
+                return Ok(_mapper.Map<OrderDto>(order));
             }
-
-            return Ok(order);
-        }
-
-        // GET: api/Orders
-        [HttpGet("All")]
-        public async Task<ActionResult<IEnumerable<Order>>> GetAll()
-        {
-            return await _context.Orders
-                .Include(_ => _.customer)
-                    .ThenInclude(_ => _.user)
-                .Include(_ => _.orderProducts)
-                    .ThenInclude(_ => _.product)
-                .Include(_ => _.address)
-                .ToListAsync();
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                return BadRequest(e.Message);
+            }
         }
 
         // GET: api/Orders
         [HttpGet("Customer/{customerId}")]
+        [Authorize("BasicRead")]
         public async Task<ActionResult<IEnumerable<Order>>> GetByCustomer(string customerId)
         {
-            return await _context.Orders
-                .Where(_ => _.customerId == new Guid(customerId) && _.isActive)
-                .Include(_ => _.customer)
-                    .ThenInclude(_ => _.user)
-                .Include(_ => _.orderProducts)
-                    .ThenInclude(_ => _.product)
-                .Include(_ => _.address)
-                .ToListAsync();
+            try
+            {
+                var orders = await _orderService.GetByCustomer(new Guid(customerId));
+                return Ok(_mapper.Map<IEnumerable<OrderDto>>(orders));
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                return BadRequest(e.Message);
+            }
         }
 
         // POST: api/Orders
         [HttpPost]
-        public async Task<ActionResult<Order>> Post(Order order)
+        [Authorize("BasicWrite")]
+        public async Task<ActionResult<Order>> Post([FromBody] OrderDto orderDto)
         {
-            order.id = Guid.NewGuid();
-            order.creationDates = DateTime.Now;
-            order.dateUpdate = DateTime.Now;
-            order.isActive = true;
-
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("Get", new { id = order.id }, order);
+            try
+            {
+                var order = _mapper.Map<Order>(orderDto);
+                var orderSaved = await _orderService.Save(order);
+                return Ok(_mapper.Map<OrderDto>(order));
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                return BadRequest(e.Message);
+            }
         }
 
         // PUT: api/Orders/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<Order>> Put(string id, Order order)
+        [Authorize("BasicWrite")]
+        public async Task<ActionResult<Order>> Put(string id, [FromBody] OrderDto orderDto)
         {
-            if (new Guid(id) != order.id) return BadRequest();
+            try
+            {
+                if (new Guid(id) != orderDto.id) return BadRequest("Id does not match");
 
-            order.dateUpdate = DateTime.Now;
-            return await UpdateOrder(order);
+                var order = _mapper.Map<Order>(orderDto);
+                var orderUpdated = await _orderService.Update(order);
+                return Ok(_mapper.Map<OrderDto>(orderUpdated));
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                return BadRequest(e.Message);
+            }
         }
 
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]
+        [Authorize("BasicWrite")]
         public async Task<ActionResult<Order>> Delete(string id)
-        {
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            return await UpdateOrderActive(order, false);
-        }
-
-        private async Task<ActionResult<Order>> UpdateOrder(Order order)
         {
             try
             {
-                _context.Update(order);
-                await _context.SaveChangesAsync();
+                var order = await _orderService.DeleteOrder(new Guid(id));
+                return Ok(_mapper.Map<OrderDto>(order));
             }
-            catch (DbUpdateConcurrencyException e)
+            catch (Exception e)
             {
-                if (!OrderExists(order.id)) return NotFound();
-
                 Console.Error.WriteLine(e);
-                return BadRequest();
+                return BadRequest(e.Message);
             }
-
-            return Ok(order);
-        }
-
-        private async Task<ActionResult<Order>> UpdateOrderActive(Order order, bool isActive)
-        {
-            order.isActive = isActive;
-            return await UpdateOrder(order);
-        }
-
-        private bool OrderExists(Guid? id)
-        {
-            return _context.Orders.Any(_ => _.id == id);
         }
     }
 }

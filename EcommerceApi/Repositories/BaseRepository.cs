@@ -1,5 +1,4 @@
-﻿using EcommerceApi.Models.Database;
-using EcommerceApi.Repositories.Contracts;
+﻿using EcommerceApi.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceApi.Repositories

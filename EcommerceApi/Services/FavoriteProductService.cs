@@ -7,8 +7,8 @@ namespace EcommerceApi.Services
     public class FavoriteProductService : BaseService<FavoriteProduct>, IFavoriteProductService
     {
         IFavoriteProductRepository _FavoriteProductRepository;
-        public FavoriteProductService(IBaseRepository<FavoriteProduct> repository) : base(repository) {
-            _FavoriteProductRepository = (IFavoriteProductRepository)repository;
+        public FavoriteProductService(IFavoriteProductRepository repository) : base(repository) {
+            _FavoriteProductRepository = repository;
         }
 
         public async Task<IEnumerable<FavoriteProduct>> GetFavoriteProducts()

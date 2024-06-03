@@ -9,13 +9,13 @@ namespace EcommerceApi.Services
 {
     public class UserService : BaseService<User>, IUserService
     {
-        IUserRepository _UserRepository;
-        private CryptographyHelper _cryptographyHelper;
-        private IAuthorizationService _authorizationService;
+        private readonly IUserRepository _UserRepository;
+        private readonly CryptographyHelper _cryptographyHelper;
+        private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
 
-        public UserService(IBaseRepository<User> repository, IConfiguration configuration, IAuthorizationService authorizationService, IMapper mapper) : base(repository) {
-            _UserRepository = (IUserRepository)repository;
+        public UserService(IUserRepository repository, IConfiguration configuration, IAuthorizationService authorizationService, IMapper mapper) : base(repository) {
+            _UserRepository = repository;
             _authorizationService = authorizationService;
             _mapper = mapper;
             _cryptographyHelper = new CryptographyHelper(configuration);
@@ -40,7 +40,7 @@ namespace EcommerceApi.Services
         public async Task<User?> DeleteUser(Guid id)
         {
             User? user = await GetById(id);
-            if (user == null) return null;
+            if (user == null) throw new Exception("User not found");
 
             user.isActive = false;
             return await Update(user);

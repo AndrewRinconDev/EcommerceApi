@@ -7,11 +7,11 @@ namespace EcommerceApi.Models.Database
         public double subtotal { get; set; }
         public double total { get; set; }
         public bool isPaid { get; set; }
-        public DateTime creationDates { get; set; }
-        public DateTime dateUpdate { get; set; }
+        public DateTime creationOn { get; set; }
+        public DateTime updateOn { get; set; }
         public Guid customerId { get; set; }
         public Guid addressId { get; set; }
-        public bool isActive { get; set; }
+        public bool isActive { get; set; } = true;
         [JsonIgnore]
         public virtual Customer? customer { get; set; }
         [JsonIgnore]

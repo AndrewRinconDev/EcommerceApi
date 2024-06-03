@@ -69,14 +69,15 @@ namespace EcommerceApi.Utils
         private static void AddEntityFrameworkRepositories(IServiceCollection services)
         {
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-            services.AddScoped<IBaseRepository<Address>, AddressRepository>();
-            services.AddScoped<IBaseRepository<Category>, CategoryRepository>();
-            services.AddScoped<IBaseRepository<Customer>, CustomerRepository>();
-            services.AddScoped<IBaseRepository<FavoriteProduct>, FavoriteProductRepository>();
-            services.AddScoped<IBaseRepository<Feature>, FeatureRepository>();
-            services.AddScoped<IBaseRepository<Permission>, PermissionRepository>();
-            services.AddScoped<IBaseRepository<Role>, RoleRepository>();
-            services.AddScoped<IBaseRepository<User>, UserRepository>();
+            services.AddScoped<IAddressRepository, AddressRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IFavoriteProductRepository, FavoriteProductRepository>();
+            services.AddScoped<IFeatureRepository, FeatureRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IPermissionRepository, PermissionRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
         }
 
         private static void AddServices(IServiceCollection services)
@@ -88,6 +89,7 @@ namespace EcommerceApi.Utils
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IFavoriteProductService, FavoriteProductService>();
             services.AddScoped<IFeatureService, FeatureService>();
+            services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPermissionService, PermissionService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IUserService, UserService>();

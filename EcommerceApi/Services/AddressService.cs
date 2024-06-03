@@ -7,8 +7,8 @@ namespace EcommerceApi.Services
     public class AddressService : BaseService<Address>, IAddressService
     {
         IAddressRepository _addressRepository;
-        public AddressService(IBaseRepository<Address> repository) : base(repository) {
-            _addressRepository = (IAddressRepository)repository;
+        public AddressService(IAddressRepository repository) : base(repository) {
+            _addressRepository = repository;
         }
 
         public async Task<IEnumerable<Address>> GetActiveAddresses()
@@ -18,7 +18,9 @@ namespace EcommerceApi.Services
         
         public async Task<Address?> GetActiveAddressById(Guid id)
         {
-            return await _addressRepository.GetActiveAddressById(id);
+            var addresFound = await _addressRepository.GetActiveAddressById(id);
+            if (addresFound == null) throw new Exception("Address not found");
+            return addresFound;
         }
 
         public async Task<IEnumerable<Address>> GetActiveAddressByCustomerId(Guid customerId)
@@ -37,7 +39,7 @@ namespace EcommerceApi.Services
         public async Task<Address?> DeleteAddress(Guid id)
         {
             var address = await _addressRepository.GetById(id);
-            if (address == null) return null;
+            if (address == null) throw new Exception("Address not found");
 
             address.isActive = false;
             return await _addressRepository.Update(address);

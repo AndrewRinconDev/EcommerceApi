@@ -32,11 +32,19 @@ public class BaseController<U, T> : ControllerBase, IBaseController<T> where U :
     [Authorize("BasicRead")]
     public async Task<ActionResult<T>> GetById(string id)
     {
-        U? entity = await _baseService.GetById(new Guid(id));
+        try
+        {
+            U? entity = await _baseService.GetById(new Guid(id));
 
-        if (entity == null) return NotFound();
+            if (entity == null) return NotFound();
 
-        return Ok(_mapper.Map<U, T>(entity));
+            return Ok(_mapper.Map<U, T>(entity));
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine(e);
+            return BadRequest();
+        }
     }
 
     [HttpPost()]
@@ -62,6 +70,7 @@ public class BaseController<U, T> : ControllerBase, IBaseController<T> where U :
         try
         {
             U entitySaved = await _baseService.Update(_mapper.Map<T, U>(entity));
+
             return Ok(_mapper.Map<U, T>(entitySaved));
         }
         catch (DbUpdateConcurrencyException e)

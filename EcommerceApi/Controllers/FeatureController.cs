@@ -25,7 +25,15 @@ namespace EcommerceApi.Controllers
         [Authorize("BasicRead")]
         public async Task<ActionResult<IEnumerable<Feature>>> GetByCategory(string categoryId)
         {
-            return Ok(await _featureService.GetByCategory(new Guid(categoryId)));
+            try
+            {
+                return Ok(await _featureService.GetByCategory(new Guid(categoryId)));
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+                return BadRequest(e.Message);
+            }
         }
     }
 }

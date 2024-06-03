@@ -7,8 +7,8 @@ namespace EcommerceApi.Services
     public class FeatureService : BaseService<Feature>, IFeatureService
     {
         IFeatureRepository _FeatureRepository;
-        public FeatureService(IBaseRepository<Feature> repository) : base(repository) {
-            _FeatureRepository = (IFeatureRepository)repository;
+        public FeatureService(IFeatureRepository repository) : base(repository) {
+            _FeatureRepository = repository;
         }
         
         public async Task<IEnumerable<Feature>> GetByCategory(Guid featureCategoryId)

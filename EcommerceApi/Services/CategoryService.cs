@@ -7,8 +7,8 @@ namespace EcommerceApi.Services
     public class CategoryService : BaseService<Category>, ICategoryService
     {
         ICategoryRepository _CategoryRepository;
-        public CategoryService(IBaseRepository<Category> repository) : base(repository) {
-            _CategoryRepository = (ICategoryRepository)repository;
+        public CategoryService(ICategoryRepository repository) : base(repository) {
+            _CategoryRepository = repository;
         }
 
         public async Task<IEnumerable<Category>> GetActiveCategories()
