@@ -92,6 +92,12 @@ namespace EcommerceApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Email test and@email.com
+        /// Password test Test123*
+        /// </summary>
+        /// <param name="userLoginDto"></param>
+        /// <returns></returns>
         // POST api/<UsersController>/Login
         [HttpPost("Login")]
         public async Task<ActionResult<UserLoggedDto?>> Login(UserLoginDto userLoginDto)
@@ -106,12 +112,6 @@ namespace EcommerceApi.Controllers
             }
         }
 
-        // POST api/<UsersController>/ChangePassword
-        /// <summary>
-        /// Password test Test123*
-        /// </summary>
-        /// <param name="userChangePasswordDto"></param>
-        /// <returns></returns>
         [HttpPost("ChangePassword")]
         [Authorize("BasicWrite")]
         public async Task<ActionResult<UserDto>> ChangePassword(UserChangePasswordDto userChangePasswordDto)

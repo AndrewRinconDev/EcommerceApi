@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EcommerceApi.Models.Database;
+using EcommerceApi.Models.Dto;
 using EcommerceApi.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -108,7 +109,7 @@ namespace EcommerceApi.Controllers
             }
             catch (Exception e)
             {
-                if (!await _addressService.Exist(addressDto.id)) return NotFound();
+                if (!await _addressService.Exist(new Guid(id))) return NotFound();
 
                 Console.Error.WriteLine(e);
                 return BadRequest();

@@ -1,131 +1,41 @@
-using EcommerceApi.Context;
+﻿using AutoMapper;
 using EcommerceApi.Models.Database;
+using EcommerceApi.Models.Dto;
+using EcommerceApi.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Net;
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace EcommerceApi.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
-    public class OrderRecordController : ControllerBase
+    [ApiController]
+    [Authorize]
+    public class OrderRecordController : BaseController<OrderRecord, OrderRecordDto>
     {
-        private readonly EcommerceDbContext _context;
+        private readonly IOrderRecordService _orderRecordService;
+        private readonly IMapper _mapper;
 
-        public OrderRecordController(EcommerceDbContext context)
-        {
-            _context = context;
+        public OrderRecordController(IMapper mapper, IOrderRecordService baseService) : base(mapper, baseService) {
+            _orderRecordService = baseService;
+            _mapper = mapper;
         }
 
-        // GET: api/<OrderRecordsController>
-        [HttpGet]
-        public ActionResult<IEnumerable<OrderRecord>> Get()
-        {
-            return _context.OrderRecords
-                .Include(_ => _.order)
-                .Include(_ => _.orderState)
-                .Where(_ => _.order.isActive)
-                .ToList();
-        }
-
-        // GET api/<OrderRecordsController>/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<OrderRecord>> Get(string id)
-        {
-            var orderRecordFound = await _context.OrderRecords
-                .Include(_ => _.orderState)
-                .FirstOrDefaultAsync(_ => _.id == new Guid(id));
-
-            if (orderRecordFound == null) return NotFound();
-
-            return Ok(orderRecordFound);
-        }
-
-        // GET api/<OrderRecordsController>/5
         [HttpGet("Order/{orderId}")]
-        public async Task<ActionResult<IEnumerable<OrderRecord>>> GetByOrder(string orderId)
+        public async Task<ActionResult<IEnumerable<OrderRecordDto>>> GetByOrder(Guid orderId)
         {
-            var orderRecordFound = await _context.OrderRecords
-                .Include(_ => _.orderState)
-                .Where(_ => _.orderId == new Guid(orderId)).ToListAsync();
-
-            if (orderRecordFound == null) return NotFound();
-
-            return Ok(orderRecordFound);
-        }
-
-        // GET: api/<OrderRecordsController>/All
-        [HttpGet("All")]
-        public ActionResult<IEnumerable<OrderRecord>> GetAll()
-        {
-            return _context.OrderRecords
-                .Include(_ => _.orderState)
-                .ToList();
-        }
-
-        // POST api/<OrderRecordsController>
-        [HttpPost]
-        public async Task<ActionResult<OrderRecord>> Post(OrderRecord orderRecord)
-        {
-            if (!OrderExists(orderRecord.orderId)) return NotFound();
-
-            orderRecord.id = Guid.NewGuid();
-            orderRecord.date = DateTime.Now;
-
-            _context.OrderRecords.Add(orderRecord);
-            await _context.SaveChangesAsync();
-
-            return Ok(orderRecord);
-        }
-
-        // PUT api/<OrderRecordsController>/5
-        [HttpPut("{id}")]
-        public async Task<ActionResult<OrderRecord>> Put(string id, OrderRecord orderRecord)
-        {
-            if (new Guid(id) != orderRecord.id || !OrderExists(orderRecord.orderId)) return BadRequest();
-
             try
             {
-                _context.Update(orderRecord);
-                await _context.SaveChangesAsync();
+                var orderRecords = await _orderRecordService.GetByOrder(orderId);
+                return Ok(_mapper.Map<IEnumerable<OrderRecordDto>>(orderRecords));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
-                if (!OrderRecordExists(orderRecord.id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                Console.Error.WriteLine(e);
+                return BadRequest(e.Message);
             }
-
-            return Ok(orderRecord);
         }
 
-        // DELETE api/<OrderRecordsController>/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> Delete(string id)
-        {
-            var orderRecordFound = await _context.OrderRecords.FindAsync(id);
-
-            if (orderRecordFound == null) return NotFound();
-
-            _context.OrderRecords.Remove(orderRecordFound);
-            await _context.SaveChangesAsync();
-
-            return Ok(true);
-        }
-
-        private bool OrderExists(Guid? orderId)
-        {
-            return _context.Orders.Any(_ => _.id == orderId && _.isActive);
-        }
-
-        private bool OrderRecordExists(Guid? id)
-        {
-            return _context.OrderRecords.Any(e => e.id == id);
-        }
     }
 }

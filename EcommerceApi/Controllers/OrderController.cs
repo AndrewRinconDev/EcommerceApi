@@ -1,5 +1,6 @@
 using AutoMapper;
 using EcommerceApi.Models.Database;
+using EcommerceApi.Models.Dto;
 using EcommerceApi.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -81,7 +82,7 @@ namespace EcommerceApi.Controllers
             try
             {
                 var order = _mapper.Map<Order>(orderDto);
-                var orderSaved = await _orderService.Save(order);
+                var orderSaved = await _orderService.SaveOrder(order);
                 return Ok(_mapper.Map<OrderDto>(order));
             }
             catch (Exception e)
@@ -101,7 +102,7 @@ namespace EcommerceApi.Controllers
                 if (new Guid(id) != orderDto.id) return BadRequest("Id does not match");
 
                 var order = _mapper.Map<Order>(orderDto);
-                var orderUpdated = await _orderService.Update(order);
+                var orderUpdated = await _orderService.UpdateOrder(order);
                 return Ok(_mapper.Map<OrderDto>(orderUpdated));
             }
             catch (Exception e)

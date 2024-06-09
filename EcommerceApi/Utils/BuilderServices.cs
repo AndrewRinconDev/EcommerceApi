@@ -75,6 +75,8 @@ namespace EcommerceApi.Utils
             services.AddScoped<IFavoriteProductRepository, FavoriteProductRepository>();
             services.AddScoped<IFeatureRepository, FeatureRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderProductRepository, OrderProductRepository>();
+            services.AddScoped<IOrderRecordRepository, OrderRecordRepository>();
             services.AddScoped<IPermissionRepository, PermissionRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
@@ -90,6 +92,8 @@ namespace EcommerceApi.Utils
             services.AddScoped<IFavoriteProductService, FavoriteProductService>();
             services.AddScoped<IFeatureService, FeatureService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IOrderProductService, OrderProductService>();
+            services.AddScoped<IOrderRecordService, OrderRecordService>();
             services.AddScoped<IPermissionService, PermissionService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IUserService, UserService>();
