@@ -13,6 +13,6 @@ namespace EcommerceApi.Controllers
     [Authorize]
     public class FeatureCategoryController : BaseController<FeatureCategory, FeatureCategory>
     {
-        public FeatureCategoryController(IMapper mapper, IBaseService<FeatureCategory> baseService) : base(mapper, baseService) { }
+        public FeatureCategoryController(IMapper mapper, IFeatureCategoryService baseService) : base(mapper, baseService) { }
     }
 }

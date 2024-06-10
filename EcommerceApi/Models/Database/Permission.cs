@@ -1,5 +1,4 @@
-﻿using EcommerceApi.Models.Reference;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace EcommerceApi.Models.Database
 {

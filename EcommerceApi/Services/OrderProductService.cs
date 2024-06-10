@@ -6,7 +6,11 @@ namespace EcommerceApi.Services
 {
     public class OrderProductService : BaseService<OrderProduct>, IOrderProductService
     {
-        public OrderProductService(IOrderProductRepository repository) : base(repository) { }
+        private readonly IOrderProductRepository _orderProductRepository;
+        public OrderProductService(IOrderProductRepository repository) : base(repository)
+        {
+            _orderProductRepository = repository;
+        }
 
         public async Task SaveAllProducts(Order order)
         {
@@ -15,7 +19,7 @@ namespace EcommerceApi.Services
             foreach (var orderProduct in order.orderProducts)
             {
                 orderProduct.orderId = order.id;
-                await _repository.Save(orderProduct);
+                await _orderProductRepository.Save(orderProduct);
             }
         }
     }

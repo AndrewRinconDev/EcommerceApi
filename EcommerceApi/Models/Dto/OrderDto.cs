@@ -1,4 +1,6 @@
-﻿namespace EcommerceApi.Models.Dto
+﻿using System.Text.Json.Serialization;
+
+namespace EcommerceApi.Models.Dto
 {
     public class OrderDto : BDEntityDto
     {
@@ -10,5 +12,13 @@
         public Guid customerId { get; set; }
         public Guid addressId { get; set; }
         public bool isActive { get; set; } = true;
+        [JsonIgnore]
+        public virtual AddressDto? address { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<PaymentDto>? payments { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<OrderRecordDto>? orderRecords { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<OrderProductDto>? orderProducts { get; set; }
     }
 }

@@ -8,6 +8,6 @@ namespace EcommerceApi.Models.Dto
         public Guid customerId { get; set; }
         public Guid principalProductId { get; set; }
         [JsonIgnore]
-        public virtual PrincipalProduct? principalProduct { get; set; }
+        public virtual PrincipalProductDto? principalProduct { get; set; }
     }
 }

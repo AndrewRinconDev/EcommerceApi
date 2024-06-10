@@ -6,7 +6,8 @@ namespace EcommerceApi.Services
 {
     public class FeatureService : BaseService<Feature>, IFeatureService
     {
-        IFeatureRepository _FeatureRepository;
+        private readonly IFeatureRepository _FeatureRepository;
+
         public FeatureService(IFeatureRepository repository) : base(repository) {
             _FeatureRepository = repository;
         }
