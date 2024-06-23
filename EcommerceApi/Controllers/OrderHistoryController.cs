@@ -12,23 +12,23 @@ namespace EcommerceApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class OrderRecordController : BaseController<OrderRecord, OrderRecordDto>
+    public class OrderHistoryController : BaseController<OrderHistory, OrderHistoryDto>
     {
-        private readonly IOrderRecordService _orderRecordService;
+        private readonly IOrderHistoryService _orderHistoryService;
         private readonly IMapper _mapper;
 
-        public OrderRecordController(IMapper mapper, IOrderRecordService baseService) : base(mapper, baseService) {
-            _orderRecordService = baseService;
+        public OrderHistoryController(IMapper mapper, IOrderHistoryService baseService) : base(mapper, baseService) {
+            _orderHistoryService = baseService;
             _mapper = mapper;
         }
 
         [HttpGet("Order/{orderId}")]
-        public async Task<ActionResult<IEnumerable<OrderRecordDto>>> GetByOrder(Guid orderId)
+        public async Task<ActionResult<IEnumerable<OrderHistoryDto>>> GetByOrder(Guid orderId)
         {
             try
             {
-                var orderRecords = await _orderRecordService.GetByOrder(orderId);
-                return Ok(_mapper.Map<IEnumerable<OrderRecordDto>>(orderRecords));
+                var orderHistorys = await _orderHistoryService.GetByOrder(orderId);
+                return Ok(_mapper.Map<IEnumerable<OrderHistoryDto>>(orderHistorys));
             }
             catch (Exception e)
             {

@@ -2,8 +2,8 @@
 
 namespace EcommerceApi.Repositories.Contracts
 {
-    public interface IOrderRecordRepository : IBaseRepository<OrderRecord>
+    public interface IOrderHistoryRepository : IBaseRepository<OrderHistory>
     {
-        public Task<IEnumerable<OrderRecord>> GetByOrder(Guid orderId);
+        public Task<IEnumerable<OrderHistory>> GetByOrder(Guid orderId);
     }
 }

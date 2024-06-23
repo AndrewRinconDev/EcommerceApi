@@ -17,7 +17,7 @@ namespace EcommerceApi
             CreateMap<FeatureProduct, FeatureProductDto>().ReverseMap();
             CreateMap<Order, OrderDto>().ReverseMap();
             CreateMap<OrderProduct, OrderProductDto>().ReverseMap();
-            CreateMap<OrderRecord, OrderRecordDto>().ReverseMap();
+            CreateMap<OrderHistory, OrderHistoryDto>().ReverseMap();
             CreateMap<Payment, PaymentDto>().ReverseMap();
             CreateMap<PaymentCard, PaymentCardDto>().ReverseMap();
             CreateMap<PrincipalProduct, PrincipalProductDto>().ReverseMap();

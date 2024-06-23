@@ -19,7 +19,7 @@ namespace EcommerceApi.Models.Database
         [JsonIgnore]
         public virtual ICollection<Payment>? payments { get; set; }
         [JsonIgnore]
-        public virtual ICollection<OrderRecord>? orderRecords { get; set; }
+        public virtual ICollection<OrderHistory>? orderHistorys { get; set; }
         [JsonIgnore]
         public virtual ICollection<OrderProduct>? orderProducts { get; set; }
     }

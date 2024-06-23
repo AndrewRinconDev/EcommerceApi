@@ -17,7 +17,7 @@ namespace EcommerceApi.Models.Dto
         [JsonIgnore]
         public virtual ICollection<PaymentDto>? payments { get; set; }
         [JsonIgnore]
-        public virtual ICollection<OrderRecordDto>? orderRecords { get; set; }
+        public virtual ICollection<OrderHistoryDto>? orderHistorys { get; set; }
         [JsonIgnore]
         public virtual ICollection<OrderProductDto>? orderProducts { get; set; }
     }

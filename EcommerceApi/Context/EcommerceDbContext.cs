@@ -16,7 +16,7 @@ namespace EcommerceApi.Context
         public DbSet<FeatureCategory> FeatureCategories { get; set; }
         public DbSet<FeatureProduct> FeatureProducts { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderRecord> OrderRecords { get; set; }
+        public DbSet<OrderHistory> OrderHistories { get; set; }
         public DbSet<OrderProduct> OrderProducts { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<PaymentCard> PaymentCards { get; set; }
@@ -105,10 +105,10 @@ namespace EcommerceApi.Context
                 b.Navigation("product");
             });
 
-            modelBuilder.Entity<OrderRecord>(b =>
+            modelBuilder.Entity<OrderHistory>(b =>
             {
                 b.HasOne<Order>("order")
-                    .WithMany("orderRecords")
+                    .WithMany("orderHistorys")
                     .HasForeignKey("orderId")
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .IsRequired();

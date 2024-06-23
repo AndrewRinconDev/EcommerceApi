@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace EcommerceApi.Models.Database
 {
-    public class OrderRecord : BDEntity
+    public class OrderHistory : BDEntity
     {
         public string detail { get; set; }
         public DateTime date { get; set; }

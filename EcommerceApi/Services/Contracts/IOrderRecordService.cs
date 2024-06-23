@@ -2,8 +2,8 @@
 
 namespace EcommerceApi.Services.Contracts
 {
-    public interface IOrderRecordService : IBaseService<OrderRecord>
+    public interface IOrderHistoryService : IBaseService<OrderHistory>
     {
-        public Task<IEnumerable<OrderRecord>> GetByOrder(Guid orderId);
+        public Task<IEnumerable<OrderHistory>> GetByOrder(Guid orderId);
     }
 }

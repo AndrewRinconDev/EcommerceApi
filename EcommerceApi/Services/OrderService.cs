@@ -9,11 +9,11 @@ namespace EcommerceApi.Services
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderProductService _orderProductService;
-        private readonly IOrderRecordRepository _orderRecordRepository;
-        public OrderService(IOrderRepository repository, IOrderProductService orderProductService, IOrderRecordRepository orderRecordRepository) : base(repository) {
+        private readonly IOrderHistoryRepository _orderHistoryRepository;
+        public OrderService(IOrderRepository repository, IOrderProductService orderProductService, IOrderHistoryRepository orderHistoryRepository) : base(repository) {
             _orderRepository = repository;
             _orderProductService = orderProductService;
-            _orderRecordRepository = orderRecordRepository;
+            _orderHistoryRepository = orderHistoryRepository;
         }
 
         public async Task<IEnumerable<Order>> GetAllActive()
@@ -43,7 +43,7 @@ namespace EcommerceApi.Services
             {
                 await _orderProductService.SaveAllProducts(orderSaved);
 
-                await _orderRecordRepository.Save(new OrderRecord
+                await _orderHistoryRepository.Save(new OrderHistory
                 {
                     orderId = orderSaved.id,
                     date = currentDate,

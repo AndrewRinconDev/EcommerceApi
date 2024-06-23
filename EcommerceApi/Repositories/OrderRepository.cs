@@ -26,7 +26,7 @@ namespace EcommerceApi.Repositories
                     .ThenInclude(_ => _.user)
                 .Include(_ => _.orderProducts)
                     .ThenInclude(_ => _.product)
-                .Include(_ => _.orderRecords)
+                .Include(_ => _.orderHistorys)
                 .Where(_ => _.isActive && id == id)
                 .FirstOrDefaultAsync();
         }
